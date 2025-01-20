@@ -400,6 +400,7 @@ const Catalog = () => {
                 </div>
                 <div className={styles.location}>
                   <span className={styles.rating}>★ {camper.rating}</span>
+                  <span className={styles.reviewsCount}>({camper.reviews} {camper.reviews === 1 ? 'Review' : 'Reviews'})</span>
                   <span className={styles.locationText}>{camper.location}</span>
                 </div>
                 <p className={styles.description}>{camper.description}</p>

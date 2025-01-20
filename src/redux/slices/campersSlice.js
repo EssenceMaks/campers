@@ -9,6 +9,7 @@ const transformCamperForCatalog = (camper) => ({
   name: camper.name,
   price: camper.price,
   rating: camper.rating,
+  reviews: camper.reviews?.length || 0,
   location: camper.location,
   description: camper.description?.length > 150 
     ? `${camper.description.slice(0, 150)}...` 

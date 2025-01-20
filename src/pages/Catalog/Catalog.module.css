@@ -260,6 +260,12 @@
   color: #f6ad55;
 }
 
+.reviewsCount {
+  color: #666666;
+  margin-left: 4px;
+  margin-right: 8px;
+}
+
 .locationText {
   color: #999;
 }
