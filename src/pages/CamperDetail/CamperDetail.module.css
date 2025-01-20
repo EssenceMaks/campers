@@ -1,0 +1,16 @@
+.camperDetail {
+  padding: 40px 0;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.camperDetail h1 {
+  margin-bottom: 2rem;
+  color: #333;
+  text-align: center;
+}
+
+.camperDetail p {
+  font-size: 1.1rem;
+  color: #666;
+}
