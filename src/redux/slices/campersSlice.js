@@ -15,22 +15,83 @@ const transformCamperForCatalog = (camper) => ({
     : camper.description || '',
   mainImage: camper.gallery?.[0]?.original,
   features: {
-    transmission: camper.transmission,
-    engine: camper.engine,
+    transmission: camper.transmission, // "automatic" или "manual"
+    engine: camper.engine, // "petrol", "diesel", "hybrid", "gas"
+    AC: camper.AC,
+    bathroom: camper.bathroom,
     kitchen: camper.kitchen,
-    AC: camper.AC
-  }
+    TV: camper.TV,
+    radio: camper.radio,
+    refrigerator: camper.refrigerator,
+    microwave: camper.microwave,
+    gas: camper.gas,
+    water: camper.water
+  },
+  form: camper.form // "alcove", "fullyIntegrated", "panelTruck"
 });
+
+const initialState = {
+  items: [],
+  isLoading: false,
+  error: null,
+  pagination: {
+    page: 1,
+    limit: 9,
+    total: 0
+  },
+  hasMore: true
+};
 
 export const searchCampers = createAsyncThunk(
   "campers/searchCampers",
-  async ({ page = 1 }) => {
+  async ({ page = 1 }, { getState }) => {
     try {
       const response = await axios.get(`${BASE_URL}/campers`);
       const { items = [], total = 0 } = response.data;
+      const filters = getState().filters;
+      
+      const transformedItems = items.map(transformCamperForCatalog);
+      const filteredItems = transformedItems.filter(camper => {
+        // Фильтр по локации
+        if (filters.location && !camper.location.toLowerCase().includes(filters.location.toLowerCase())) {
+          return false;
+        }
+
+        // Фильтр по оборудованию
+        const hasAllEquipment = Object.entries(filters.equipment)
+          .every(([key, isSelected]) => {
+            if (!isSelected) return true;
+            return camper.features[key] === true;
+          });
+
+        if (!hasAllEquipment) return false;
+
+        // Фильтр по типу двигателя
+        if (filters.engine && camper.features.engine !== filters.engine) {
+          return false;
+        }
+
+        // Фильтр по трансмиссии
+        if (filters.transmission && camper.features.transmission !== filters.transmission) {
+          return false;
+        }
+
+        // Фильтр по типу транспортного средства
+        if (filters.form && camper.form !== filters.form) {
+          return false;
+        }
+
+        return true;
+      });
+      
+      // Пагинация
+      const startIndex = (page - 1) * initialState.pagination.limit;
+      const endIndex = startIndex + initialState.pagination.limit;
+      const paginatedItems = filteredItems.slice(startIndex, endIndex);
+      
       return {
-        items: items.map(transformCamperForCatalog),
-        total
+        items: paginatedItems,
+        total: filteredItems.length
       };
     } catch (error) {
       console.error("API Error:", error);
@@ -39,148 +100,50 @@ export const searchCampers = createAsyncThunk(
   }
 );
 
-const initialState = {
-  items: [],
-  camper: {},
-  isLoading: false,
-  error: null,
-  filters: {
-    location: '',
-    equipment: {
-      AC: false,
-      TV: false,
-      kitchen: false,
-      shower: false,
-      heater: false,
-      toilet: false,
-      wifi: false,
-    },
-    vehicleType: {
-      van: false,
-      RV: false,
-      motorhome: false,
-      campervan: false,
-      travelTrailer: false,
-    }
-  },
-  pagination: {
-    page: 1,
-    per_page: 4,
-    total: 0,
-  },
-  hasMore: true,
-  isAutoSearch: true
-};
-
-const handleLoading = (state) => {
-  state.isLoading = true;
-  state.error = null;
-}
-
-const handleError = (state, action) => {
-  state.isLoading = false;
-  state.error = action.error.message;
-}
-
-const handleFulfilled = (state) => {
-  state.isLoading = false;
-  state.error = null;
-}
-
 const campersSlice = createSlice({
   name: "campers",
   initialState,
   reducers: {
-    setLocationFilter: (state, action) => {
-      state.filters.location = action.payload;
-    },
-    setEquipmentFilter: (state, action) => {
-      const { name, value } = action.payload;
-      state.filters.equipment[name] = value;
-    },
-    setVehicleTypeFilter: (state, action) => {
-      const { name, value } = action.payload;
-      state.filters.vehicleType[name] = value;
-    },
-    toggleAutoSearch: (state) => {
-      state.isAutoSearch = !state.isAutoSearch;
-    },
-    resetFilters: (state) => {
-      state.filters = initialState.filters;
-    },
     setPage: (state, action) => {
       state.pagination.page = action.payload;
     },
     resetPagination: (state) => {
       state.pagination = initialState.pagination;
-      state.hasMore = true;
     },
     resetCampers: (state) => {
       state.items = [];
-      state.hasMore = true;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
-      .addCase(searchCampers.pending, handleLoading)
-      .addCase(searchCampers.rejected, handleError)
+      .addCase(searchCampers.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
       .addCase(searchCampers.fulfilled, (state, action) => {
-        handleFulfilled(state);
-        const { items = [], total = 0 } = action.payload;
+        const { items, total } = action.payload;
         
-        // Apply filters
-        let filteredItems = items;
-        
-        // Filter by location
-        if (state.filters.location) {
-          filteredItems = filteredItems.filter(item => 
-            item.location.toLowerCase().includes(state.filters.location.toLowerCase())
-          );
-        }
-        
-        // Filter by equipment
-        Object.entries(state.filters.equipment).forEach(([key, value]) => {
-          if (value) {
-            filteredItems = filteredItems.filter(item => item.features[key]);
-          }
-        });
-        
-        // Filter by vehicle type
-        Object.entries(state.filters.vehicleType).forEach(([key, value]) => {
-          if (value) {
-            filteredItems = filteredItems.filter(item => item.type === key);
-          }
-        });
-        
-        // Handle pagination
         if (state.pagination.page === 1) {
-          state.items = filteredItems;
+          state.items = items;
         } else {
-          const existingIds = new Set(state.items.map(item => item.id));
-          const newItems = filteredItems.filter(item => !existingIds.has(item.id));
-          state.items = [...state.items, ...newItems];
+          state.items = [...state.items, ...items];
         }
         
         state.pagination.total = total;
-        state.hasMore = filteredItems.length === state.pagination.per_page;
+        state.hasMore = items.length === state.pagination.limit;
+        state.isLoading = false;
+      })
+      .addCase(searchCampers.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
       });
   },
 });
 
 export const selectCampers = (state) => state.campers.items;
 export const selectPagination = (state) => state.campers.pagination;
-export const selectCampersQuery = (state) => state.campers;
 export const selectHasMore = (state) => state.campers.hasMore;
 
-export const { 
-  setLocationFilter,
-  setEquipmentFilter,
-  setVehicleTypeFilter,
-  toggleAutoSearch,
-  resetFilters,
-  setPage,
-  resetPagination,
-  resetCampers 
-} = campersSlice.actions;
+export const { setPage, resetPagination, resetCampers } = campersSlice.actions;
 
 export default campersSlice.reducer;

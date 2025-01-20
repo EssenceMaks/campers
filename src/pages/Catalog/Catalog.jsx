@@ -2,18 +2,13 @@ import { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { 
-  searchCampers, 
-  setLocationFilter,
-  setEquipmentFilter,
-  setVehicleTypeFilter,
-  toggleAutoSearch,
-  resetFilters,
-  setPage, 
-  resetPagination, 
-  resetCampers,
+  searchCampers,
   selectCampers,
   selectPagination,
-  selectHasMore
+  selectHasMore,
+  resetPagination,
+  resetCampers,
+  setPage
 } from '../../redux/slices/campersSlice';
 import {
   searchLocations,
@@ -21,14 +16,57 @@ import {
   selectLocationSuggestions,
   selectLocationsLoading
 } from '../../redux/slices/locationsSlice';
+import {
+  setLocationFilter,
+  setEquipmentFilter,
+  setEngineFilter,
+  setTransmissionFilter,
+  setFormFilter,
+  toggleAutoSearch,
+  resetFilters,
+  selectFilters,
+  selectIsAutoSearch
+} from '../../redux/slices/filtersSlice';
 import styles from './Catalog.module.css';
+
+const EQUIPMENT_OPTIONS = [
+  { key: 'AC', label: 'Air Conditioning' },
+  { key: 'bathroom', label: 'Bathroom' },
+  { key: 'kitchen', label: 'Kitchen' },
+  { key: 'TV', label: 'TV' },
+  { key: 'radio', label: 'Radio' },
+  { key: 'refrigerator', label: 'Refrigerator' },
+  { key: 'microwave', label: 'Microwave' },
+  { key: 'gas', label: 'Gas' },
+  { key: 'water', label: 'Water' }
+];
+
+const ENGINE_OPTIONS = [
+  { value: 'petrol', label: 'Petrol' },
+  { value: 'diesel', label: 'Diesel' },
+  { value: 'hybrid', label: 'Hybrid' },
+  { value: 'gas', label: 'Gas' }
+];
+
+const TRANSMISSION_OPTIONS = [
+  { value: 'automatic', label: 'Automatic' },
+  { value: 'manual', label: 'Manual' }
+];
+
+const VEHICLE_TYPE_OPTIONS = [
+  { value: 'alcove', label: 'Alcove' },
+  { value: 'fullyIntegrated', label: 'Fully Integrated' },
+  { value: 'panelTruck', label: 'Panel Truck' }
+];
 
 const Catalog = () => {
   const dispatch = useDispatch();
   const campers = useSelector(selectCampers);
   const pagination = useSelector(selectPagination);
   const hasMore = useSelector(selectHasMore);
-  const { isLoading, error, filters, isAutoSearch } = useSelector(state => state.campers);
+  const { isLoading, error } = useSelector(state => state.campers);
+  const filters = useSelector(selectFilters);
+  const isAutoSearch = useSelector(selectIsAutoSearch);
   const locationSuggestions = useSelector(selectLocationSuggestions);
   const isLoadingLocations = useSelector(selectLocationsLoading);
   
@@ -57,20 +95,41 @@ const Catalog = () => {
     setLocationInput(location);
     setShowSuggestions(false);
     dispatch(setLocationFilter(location));
-    dispatch(resetPagination());
-    dispatch(searchCampers({ page: 1 }));
-  };
-
-  const handleEquipmentChange = (name) => {
-    dispatch(setEquipmentFilter({ name, value: !filters.equipment[name] }));
     if (isAutoSearch) {
       dispatch(resetPagination());
       dispatch(searchCampers({ page: 1 }));
     }
   };
 
-  const handleVehicleTypeChange = (name) => {
-    dispatch(setVehicleTypeFilter({ name, value: !filters.vehicleType[name] }));
+  const handleEquipmentChange = (name) => {
+    dispatch(setEquipmentFilter({ 
+      name, 
+      value: !filters.equipment[name] 
+    }));
+    if (isAutoSearch) {
+      dispatch(resetPagination());
+      dispatch(searchCampers({ page: 1 }));
+    }
+  };
+
+  const handleEngineChange = (value) => {
+    dispatch(setEngineFilter(value === filters.engine ? '' : value));
+    if (isAutoSearch) {
+      dispatch(resetPagination());
+      dispatch(searchCampers({ page: 1 }));
+    }
+  };
+
+  const handleTransmissionChange = (value) => {
+    dispatch(setTransmissionFilter(value === filters.transmission ? '' : value));
+    if (isAutoSearch) {
+      dispatch(resetPagination());
+      dispatch(searchCampers({ page: 1 }));
+    }
+  };
+
+  const handleFormChange = (value) => {
+    dispatch(setFormFilter(value === filters.form ? '' : value));
     if (isAutoSearch) {
       dispatch(resetPagination());
       dispatch(searchCampers({ page: 1 }));
@@ -138,8 +197,10 @@ const Catalog = () => {
                   setLocationInput('');
                   setShowSuggestions(false);
                   dispatch(setLocationFilter(''));
-                  dispatch(resetPagination());
-                  dispatch(searchCampers({ page: 1 }));
+                  if (isAutoSearch) {
+                    dispatch(resetPagination());
+                    dispatch(searchCampers({ page: 1 }));
+                  }
                 }}
                 title="Clear location"
               >
@@ -168,14 +229,46 @@ const Catalog = () => {
         {/* Equipment Filter */}
         <div className={styles.filterSection}>
           <h3>Vehicle Equipment</h3>
-          {Object.entries(filters.equipment).map(([key, value]) => (
+          {EQUIPMENT_OPTIONS.map(({ key, label }) => (
             <label key={key} className={styles.filterLabel}>
               <input
                 type="checkbox"
-                checked={value}
+                checked={filters.equipment[key]}
                 onChange={() => handleEquipmentChange(key)}
               />
-              {key.charAt(0).toUpperCase() + key.slice(1)}
+              {label}
+            </label>
+          ))}
+        </div>
+
+        {/* Engine Filter */}
+        <div className={styles.filterSection}>
+          <h3>Engine Type</h3>
+          {ENGINE_OPTIONS.map(({ value, label }) => (
+            <label key={value} className={styles.filterLabel}>
+              <input
+                type="radio"
+                name="engine"
+                checked={filters.engine === value}
+                onChange={() => handleEngineChange(value)}
+              />
+              {label}
+            </label>
+          ))}
+        </div>
+
+        {/* Transmission Filter */}
+        <div className={styles.filterSection}>
+          <h3>Transmission</h3>
+          {TRANSMISSION_OPTIONS.map(({ value, label }) => (
+            <label key={value} className={styles.filterLabel}>
+              <input
+                type="radio"
+                name="transmission"
+                checked={filters.transmission === value}
+                onChange={() => handleTransmissionChange(value)}
+              />
+              {label}
             </label>
           ))}
         </div>
@@ -183,14 +276,15 @@ const Catalog = () => {
         {/* Vehicle Type Filter */}
         <div className={styles.filterSection}>
           <h3>Vehicle Type</h3>
-          {Object.entries(filters.vehicleType).map(([key, value]) => (
-            <label key={key} className={styles.filterLabel}>
+          {VEHICLE_TYPE_OPTIONS.map(({ value, label }) => (
+            <label key={value} className={styles.filterLabel}>
               <input
-                type="checkbox"
-                checked={value}
-                onChange={() => handleVehicleTypeChange(key)}
+                type="radio"
+                name="vehicleType"
+                checked={filters.form === value}
+                onChange={() => handleFormChange(value)}
               />
-              {key.split(/(?=[A-Z])/).join(' ')}
+              {label}
             </label>
           ))}
         </div>
@@ -268,11 +362,10 @@ const Catalog = () => {
                       {camper.features.engine}
                     </span>
                   )}
-                  {camper.features.kitchen && (
-                    <span className={styles.feature}>Kitchen</span>
-                  )}
-                  {camper.features.AC && (
-                    <span className={styles.feature}>AC</span>
+                  {camper.form && (
+                    <span className={styles.feature}>
+                      {camper.form}
+                    </span>
                   )}
                 </div>
                 <Link to={`/camper/${camper.id}`} className={styles.showMore}>
