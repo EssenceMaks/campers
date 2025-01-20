@@ -1,7 +1,9 @@
 .header {
   width: 100%;
+  min-width: 900px;
+  max-width: 1440px;
   height: 72px;
-  background-color: #fff;
+  background-color: var(--color-neutral-lightest);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -9,7 +11,7 @@
   max-width: 1440px;
   height: 100%;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -17,23 +19,34 @@
 
 .logo a {
   text-decoration: none;
-  color: #000;
+  color: var(--color-primary-dark);
   font-weight: bold;
   font-size: 24px;
+  width: 136px;
+  height: 17px;
 }
 
 .nav {
   display: flex;
   gap: 32px;
+  position: absolute;
+  left: 50%;
+  top: 36px;
+  transform: translate(-50%, -50%);
 }
 
 .navLink {
   text-decoration: none;
-  color: #000;
+  color: var(--color-primary);
   font-size: 16px;
+  font-weight: 500;
   transition: color 0.2s ease;
 }
 
 .navLink:hover {
-  color: #666;
+  color: var(--color-accent);
+}
+
+.navLink.active {
+  color: var(--color-accent-dark);
 }
