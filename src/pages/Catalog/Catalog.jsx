@@ -72,6 +72,7 @@ const Catalog = () => {
   
   const [locationInput, setLocationInput] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isInvalidCity, setIsInvalidCity] = useState(false);
 
   useEffect(() => {
     dispatch(resetPagination());
@@ -83,21 +84,52 @@ const Catalog = () => {
     const value = e.target.value;
     setLocationInput(value);
     setShowSuggestions(true);
+    setIsInvalidCity(false);
+    
+    // Если поле пустое, сбрасываем фильтр локации
+    if (!value) {
+      dispatch(setLocationFilter(''));
+      if (isAutoSearch) {
+        dispatch(resetPagination());
+        dispatch(searchCampers({ page: 1 }));
+      }
+    }
     
     if (value.length >= 2) {
       dispatch(searchLocations(value));
     } else {
       dispatch(clearSuggestions());
     }
-  }, [dispatch]);
+  }, [dispatch, isAutoSearch]);
 
   const handleLocationSelect = (location) => {
     setLocationInput(location);
     setShowSuggestions(false);
+    setIsInvalidCity(false);
     dispatch(setLocationFilter(location));
     if (isAutoSearch) {
       dispatch(resetPagination());
       dispatch(searchCampers({ page: 1 }));
+    }
+  };
+
+  // Функция для очистки локации
+  const handleLocationClear = () => {
+    setLocationInput('');
+    setShowSuggestions(false);
+    setIsInvalidCity(false);
+    dispatch(setLocationFilter(''));
+    dispatch(clearSuggestions());
+    if (isAutoSearch) {
+      dispatch(resetPagination());
+      dispatch(searchCampers({ page: 1 }));
+    }
+  };
+
+  // Проверка валидности города при потере фокуса
+  const handleLocationBlur = () => {
+    if (locationInput && (!locationSuggestions || locationSuggestions.length === 0)) {
+      setIsInvalidCity(true);
     }
   };
 
@@ -177,8 +209,9 @@ const Catalog = () => {
               type="text"
               value={locationInput}
               onChange={handleLocationInputChange}
+              onBlur={handleLocationBlur}
               placeholder="Enter city..."
-              className={styles.locationInput}
+              className={`${styles.locationInput} ${isInvalidCity ? styles.invalidInput : ''}`}
             />
             <button 
               className={styles.locationDropdownButton}
@@ -193,15 +226,7 @@ const Catalog = () => {
             {locationInput && (
               <button 
                 className={styles.locationClearButton}
-                onClick={() => {
-                  setLocationInput('');
-                  setShowSuggestions(false);
-                  dispatch(setLocationFilter(''));
-                  if (isAutoSearch) {
-                    dispatch(resetPagination());
-                    dispatch(searchCampers({ page: 1 }));
-                  }
-                }}
+                onClick={handleLocationClear}
                 title="Clear location"
               >
                 ✕
@@ -219,6 +244,11 @@ const Catalog = () => {
                   </li>
                 ))}
               </ul>
+            )}
+            {isInvalidCity && (
+              <div className={styles.errorMessage}>
+                No campers available in this city
+              </div>
             )}
             {isLoadingLocations && (
               <div className={styles.loadingLocations}>Loading...</div>

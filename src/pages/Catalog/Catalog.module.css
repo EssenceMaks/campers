@@ -34,22 +34,30 @@
 
 .locationInputContainer {
   position: relative;
+  width: 100%;
   margin-bottom: 1rem;
 }
 
 .locationInput {
   width: 100%;
-  padding: 0.75rem;
-  padding-right: 70px; /* Space for buttons */
-  border: 1px solid #333;
+  padding: 8px 30px 8px 10px;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 1rem;
-  background: #2a2a2a;
-  color: #fff;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
 }
 
-.locationInput::placeholder {
-  color: #666;
+.invalidInput {
+  border-color: #ff4d4f;
+}
+
+.errorMessage {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 4px;
+  position: absolute;
+  left: 0;
+  bottom: -20px;
 }
 
 .locationDropdownButton,
