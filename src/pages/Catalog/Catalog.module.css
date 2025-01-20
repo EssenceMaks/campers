@@ -40,6 +40,7 @@
 .locationInput {
   width: 100%;
   padding: 0.75rem;
+  padding-right: 70px; /* Space for buttons */
   border: 1px solid #333;
   border-radius: 4px;
   font-size: 1rem;
@@ -49,6 +50,36 @@
 
 .locationInput::placeholder {
   color: #666;
+}
+
+.locationDropdownButton,
+.locationClearButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 8px;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.locationDropdownButton {
+  right: 35px;
+}
+
+.locationClearButton {
+  right: 8px;
+}
+
+.locationDropdownButton:hover,
+.locationClearButton:hover {
+  color: #249715;
 }
 
 .suggestionsList {

@@ -105,6 +105,31 @@ const Catalog = () => {
               placeholder="Enter city..."
               className={styles.locationInput}
             />
+            <button 
+              className={styles.locationDropdownButton}
+              onClick={() => {
+                setShowSuggestions(!showSuggestions);
+                dispatch(searchLocations(''));
+              }}
+              title="Show all locations"
+            >
+              ▼
+            </button>
+            {locationInput && (
+              <button 
+                className={styles.locationClearButton}
+                onClick={() => {
+                  setLocationInput('');
+                  setShowSuggestions(false);
+                  dispatch(setLocationFilter(''));
+                  dispatch(resetPagination());
+                  dispatch(searchCampers({ page: 1 }));
+                }}
+                title="Clear location"
+              >
+                ✕
+              </button>
+            )}
             {showSuggestions && locationSuggestions.length > 0 && (
               <ul className={styles.suggestionsList}>
                 {locationSuggestions.map((location, index) => (
