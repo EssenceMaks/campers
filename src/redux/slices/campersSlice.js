@@ -42,6 +42,25 @@ const initialState = {
   camper: {},
   isLoading: false,
   error: null,
+  filters: {
+    location: '',
+    equipment: {
+      ac: false,
+      tv: false,
+      kitchen: false,
+      shower: false,
+      heater: false,
+      toilet: false,
+      wifi: false
+    },
+    vehicleType: {
+      van: false,
+      rv: false,
+      motorhome: false,
+      campervan: false,
+      travelTrailer: false
+    }
+  },
   pagination: {
     page: 1,
     per_page: 4,
@@ -69,15 +88,25 @@ const campersSlice = createSlice({
   name: "campers",
   initialState,
   reducers: {
+    setLocationFilter: (state, action) => {
+      state.filters.location = action.payload;
+    },
+    setEquipmentFilter: (state, action) => {
+      const { name, value } = action.payload;
+      state.filters.equipment[name] = value;
+    },
+    setVehicleTypeFilter: (state, action) => {
+      const { name, value } = action.payload;
+      state.filters.vehicleType[name] = value;
+    },
+    resetFilters: (state) => {
+      state.filters = initialState.filters;
+    },
     setPage: (state, action) => {
       state.pagination.page = action.payload;
     },
     resetPagination: (state) => {
-      state.pagination = {
-        page: 1,
-        per_page: 4,
-        total: 0,
-      };
+      state.pagination = initialState.pagination;
       state.hasMore = true;
     },
     resetCampers: (state) => {
@@ -93,19 +122,41 @@ const campersSlice = createSlice({
         handleFulfilled(state);
         const { items = [], total = 0 } = action.payload;
         
-        // If it's the first page, replace items
+        // Apply filters
+        let filteredItems = items;
+        
+        // Filter by location
+        if (state.filters.location) {
+          filteredItems = filteredItems.filter(item => 
+            item.location.toLowerCase().includes(state.filters.location.toLowerCase())
+          );
+        }
+        
+        // Filter by equipment
+        Object.entries(state.filters.equipment).forEach(([key, value]) => {
+          if (value) {
+            filteredItems = filteredItems.filter(item => item.features[key]);
+          }
+        });
+        
+        // Filter by vehicle type
+        Object.entries(state.filters.vehicleType).forEach(([key, value]) => {
+          if (value) {
+            filteredItems = filteredItems.filter(item => item.type === key);
+          }
+        });
+        
+        // Handle pagination
         if (state.pagination.page === 1) {
-          state.items = items;
+          state.items = filteredItems;
         } else {
-          // For subsequent pages, append new items
-          // Create a Set of existing IDs to prevent duplicates
           const existingIds = new Set(state.items.map(item => item.id));
-          const newItems = items.filter(item => !existingIds.has(item.id));
+          const newItems = filteredItems.filter(item => !existingIds.has(item.id));
           state.items = [...state.items, ...newItems];
         }
         
         state.pagination.total = total;
-        state.hasMore = items.length === state.pagination.per_page;
+        state.hasMore = filteredItems.length === state.pagination.per_page;
       });
   },
 });
@@ -115,5 +166,14 @@ export const selectPagination = (state) => state.campers.pagination;
 export const selectCampersQuery = (state) => state.campers;
 export const selectHasMore = (state) => state.campers.hasMore;
 
-export const { setPage, resetPagination, resetCampers } = campersSlice.actions;
+export const { 
+  setLocationFilter,
+  setEquipmentFilter,
+  setVehicleTypeFilter,
+  resetFilters,
+  setPage,
+  resetPagination,
+  resetCampers 
+} = campersSlice.actions;
+
 export default campersSlice.reducer;

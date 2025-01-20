@@ -1,8 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { 
   searchCampers, 
+  setLocationFilter,
+  setEquipmentFilter,
+  setVehicleTypeFilter,
+  resetFilters,
   setPage, 
   resetPagination, 
   resetCampers,
@@ -10,6 +14,12 @@ import {
   selectPagination,
   selectHasMore
 } from '../../redux/slices/campersSlice';
+import {
+  searchLocations,
+  clearSuggestions,
+  selectLocationSuggestions,
+  selectLocationsLoading
+} from '../../redux/slices/locationsSlice';
 import styles from './Catalog.module.css';
 
 const Catalog = () => {
@@ -17,15 +27,57 @@ const Catalog = () => {
   const campers = useSelector(selectCampers);
   const pagination = useSelector(selectPagination);
   const hasMore = useSelector(selectHasMore);
-  const { isLoading, error } = useSelector(state => state.campers);
+  const { isLoading, error, filters } = useSelector(state => state.campers);
+  const locationSuggestions = useSelector(selectLocationSuggestions);
+  const isLoadingLocations = useSelector(selectLocationsLoading);
+  
+  const [locationInput, setLocationInput] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
-    // Reset state when component mounts
     dispatch(resetPagination());
     dispatch(resetCampers());
-    // Load first page
     dispatch(searchCampers({ page: 1 }));
   }, [dispatch]);
+
+  const handleLocationInputChange = useCallback((e) => {
+    const value = e.target.value;
+    setLocationInput(value);
+    setShowSuggestions(true);
+    
+    if (value.length >= 2) {
+      dispatch(searchLocations(value));
+    } else {
+      dispatch(clearSuggestions());
+    }
+  }, [dispatch]);
+
+  const handleLocationSelect = (location) => {
+    setLocationInput(location);
+    setShowSuggestions(false);
+    dispatch(setLocationFilter(location));
+    dispatch(resetPagination());
+    dispatch(searchCampers({ page: 1 }));
+  };
+
+  const handleEquipmentChange = (name) => {
+    dispatch(setEquipmentFilter({ name, value: !filters.equipment[name] }));
+    dispatch(resetPagination());
+    dispatch(searchCampers({ page: 1 }));
+  };
+
+  const handleVehicleTypeChange = (name) => {
+    dispatch(setVehicleTypeFilter({ name, value: !filters.vehicleType[name] }));
+    dispatch(resetPagination());
+    dispatch(searchCampers({ page: 1 }));
+  };
+
+  const handleResetFilters = () => {
+    dispatch(resetFilters());
+    setLocationInput('');
+    dispatch(resetPagination());
+    dispatch(searchCampers({ page: 1 }));
+  };
 
   const handleLoadMore = () => {
     const nextPage = pagination.page + 1;
@@ -42,103 +94,81 @@ const Catalog = () => {
       <div className={styles.filtersColumn}>
         <h2 className={styles.filtersTitle}>Filters</h2>
         
+        {/* Location Filter */}
         <div className={styles.filterSection}>
-          <h3>Vehicle equipment</h3>
-          <label>
+          <h3>Location</h3>
+          <div className={styles.locationInputContainer}>
             <input
-              type="checkbox"
-              checked={false}
-              onChange={() => {}}
+              type="text"
+              value={locationInput}
+              onChange={handleLocationInputChange}
+              placeholder="Enter city..."
+              className={styles.locationInput}
             />
-            AC
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={false}
-              onChange={() => {}}
-            />
-            Automatic
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={false}
-              onChange={() => {}}
-            />
-            Kitchen
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={false}
-              onChange={() => {}}
-            />
-            TV
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={false}
-              onChange={() => {}}
-            />
-            Bathroom
-          </label>
+            {showSuggestions && locationSuggestions.length > 0 && (
+              <ul className={styles.suggestionsList}>
+                {locationSuggestions.map((location, index) => (
+                  <li
+                    key={index}
+                    onClick={() => handleLocationSelect(location)}
+                    className={styles.suggestionItem}
+                  >
+                    {location}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {isLoadingLocations && (
+              <div className={styles.loadingLocations}>Loading...</div>
+            )}
+          </div>
         </div>
 
+        {/* Equipment Filter */}
         <div className={styles.filterSection}>
-          <h3>Vehicle type</h3>
-          <label>
-            <input
-              type="checkbox"
-              checked={false}
-              onChange={() => {}}
-            />
-            Van
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={false}
-              onChange={() => {}}
-            />
-            Fully Integrated
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={false}
-              onChange={() => {}}
-            />
-            Alcove
-          </label>
+          <h3>Vehicle Equipment</h3>
+          {Object.entries(filters.equipment).map(([key, value]) => (
+            <label key={key} className={styles.filterLabel}>
+              <input
+                type="checkbox"
+                checked={value}
+                onChange={() => handleEquipmentChange(key)}
+              />
+              {key.charAt(0).toUpperCase() + key.slice(1)}
+            </label>
+          ))}
         </div>
 
-        <div className={styles.filterActions}>
-          <button 
-            className={styles.searchButton} 
-            onClick={() => {}}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Searching...' : 'Search'}
-          </button>
-          <button 
-            className={styles.resetButton} 
-            onClick={() => {}}
-            disabled={isLoading}
-          >
-            Reset Filters
-          </button>
+        {/* Vehicle Type Filter */}
+        <div className={styles.filterSection}>
+          <h3>Vehicle Type</h3>
+          {Object.entries(filters.vehicleType).map(([key, value]) => (
+            <label key={key} className={styles.filterLabel}>
+              <input
+                type="checkbox"
+                checked={value}
+                onChange={() => handleVehicleTypeChange(key)}
+              />
+              {key.split(/(?=[A-Z])/).join(' ')}
+            </label>
+          ))}
         </div>
+
+        <button 
+          className={styles.resetFiltersButton}
+          onClick={handleResetFilters}
+        >
+          Reset All Filters
+        </button>
       </div>
 
       <div className={styles.variantsColumn}>
-        <div className={styles.campersList}>
+        <div className={styles.campersGrid}>
           {campers.map((camper) => (
             <div key={camper.id} className={styles.camperCard}>
               <div className={styles.cardImageContainer}>
                 <img 
-                  src={camper.mainImage || 'https://via.placeholder.com/300x200?text=No+Image'} 
+                  src={camper.mainImage} 
                   alt={camper.name} 
                   className={styles.camperImage}
                   onError={(e) => {
@@ -160,11 +190,15 @@ const Catalog = () => {
                   <span className={styles.locationText}>{camper.location}</span>
                 </div>
                 <div className={styles.features}>
-                  {camper.features.transmission === 'automatic' && (
-                    <span className={styles.feature}>Automatic</span>
+                  {camper.features.transmission && (
+                    <span className={styles.feature}>
+                      {camper.features.transmission}
+                    </span>
                   )}
-                  {camper.features.engine === 'petrol' && (
-                    <span className={styles.feature}>Petrol</span>
+                  {camper.features.engine && (
+                    <span className={styles.feature}>
+                      {camper.features.engine}
+                    </span>
                   )}
                   {camper.features.kitchen && (
                     <span className={styles.feature}>Kitchen</span>
@@ -185,7 +219,7 @@ const Catalog = () => {
         
         {!isLoading && hasMore && (
           <button 
-            className={styles.loadMoreButton}
+            className={styles.loadMore}
             onClick={handleLoadMore}
           >
             Load More
