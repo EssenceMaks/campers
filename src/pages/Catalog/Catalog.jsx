@@ -98,6 +98,15 @@ const Catalog = () => {
     dispatch(searchCampers({ page: 1 }));
   }, [dispatch]);
 
+  useEffect(() => {
+    if (showFavorites) {
+      // Reset pagination and load all campers when showing favorites
+      dispatch(resetPagination());
+      dispatch(resetFilters());
+      dispatch(searchCampers({ page: 1, loadAll: true }));
+    }
+  }, [dispatch, showFavorites]);
+
   const handleLocationInputChange = useCallback((e) => {
     const value = e.target.value;
     setLocationInput(value);
@@ -223,7 +232,7 @@ const Catalog = () => {
   const filteredCampers = useMemo(() => {
     if (!campers) return [];
     
-    // If showing favorites, only show favorited campers
+    // If showing favorites, return all favorited campers without filtering
     if (showFavorites) {
       return campers.filter(camper => favoriteIds.includes(camper.id));
     }
@@ -413,7 +422,9 @@ const Catalog = () => {
           {favoriteIds.length > 0 && (
             <button
               className={`${styles.resetButton} ${showFavorites ? styles.activeFilter : ''}`}
-              onClick={() => dispatch(toggleShowFavorites())}
+              onClick={() => {
+                dispatch(toggleShowFavorites());
+              }}
             >
               Show Favorites ({favoriteIds.length})
             </button>
@@ -422,6 +433,17 @@ const Catalog = () => {
       </div>
 
       <div className={styles.variantsColumn}>
+        {showFavorites && (
+          <div className={styles.favoritesHeader}>
+            <h2>Favorites ({favoriteIds.length})</h2>
+            <button
+              className={styles.outOfFavoritesButton}
+              onClick={() => dispatch(toggleShowFavorites())}
+            >
+              Out of favorites
+            </button>
+          </div>
+        )}
         <div className={styles.campersGrid}>
           {filteredCampers.map((camper) => (
             <div key={camper.id} className={styles.camperCard}>
@@ -482,7 +504,7 @@ const Catalog = () => {
         
         {isLoading && <div className={styles.loading}>Loading...</div>}
         
-        {!isLoading && hasMore && (
+        {!isLoading && !showFavorites && hasMore && (
           <button 
             className={styles.loadMore}
             onClick={handleLoadMore}

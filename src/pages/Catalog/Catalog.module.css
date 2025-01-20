@@ -410,3 +410,32 @@
 .searchButton:hover {
   background: #1b7110;
 }
+
+.favoritesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 20px;
+}
+
+.favoritesHeader h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.outOfFavoritesButton {
+  padding: 8px 16px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.outOfFavoritesButton:hover {
+  background-color: #ff3333;
+}
