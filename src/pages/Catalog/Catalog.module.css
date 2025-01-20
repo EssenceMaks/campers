@@ -158,6 +158,34 @@
   background: rgba(36, 151, 21, 0.1);
 }
 
+.filtersActions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.resetButton {
+  background: none;
+  border: 1px solid #249715;
+  color: #249715;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.resetButton:hover {
+  background: #249715;
+  color: white;
+}
+
+.activeFilter {
+  background: #249715;
+  color: white;
+}
+
 .variantsColumn {
   display: flex;
   flex-direction: column;
@@ -227,15 +255,23 @@
 }
 
 .heartButton {
-  background: transparent;
+  background: none;
   border: none;
-  color: #fff;
-  font-size: 1.2rem;
+  font-size: 24px;
   cursor: pointer;
-  padding: 4px;
+  color: #666;
+  padding: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.heartButton:hover {
+  color: #ff4d4d;
+}
+
+.heartActive {
+  color: #ff4d4d;
 }
 
 .location {

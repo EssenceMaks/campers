@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { 
@@ -27,6 +27,7 @@ import {
   selectFilters,
   selectIsAutoSearch
 } from '../../redux/slices/filtersSlice';
+import { toggleFavorite, toggleShowFavorites, selectFavorites, selectShowFavorites } from '../../redux/slices/favoritesSlice';
 import styles from './Catalog.module.css';
 
 const EQUIPMENT_OPTIONS = [
@@ -69,6 +70,8 @@ const Catalog = () => {
   const isAutoSearch = useSelector(selectIsAutoSearch);
   const locationSuggestions = useSelector(selectLocationSuggestions);
   const isLoadingLocations = useSelector(selectLocationsLoading);
+  const favoriteIds = useSelector(selectFavorites);
+  const showFavorites = useSelector(selectShowFavorites);
   
   const [locationInput, setLocationInput] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -216,6 +219,39 @@ const Catalog = () => {
     dispatch(setPage(nextPage));
     dispatch(searchCampers({ page: nextPage }));
   };
+
+  const filteredCampers = useMemo(() => {
+    if (!campers) return [];
+    
+    // If showing favorites, only show favorited campers
+    if (showFavorites) {
+      return campers.filter(camper => favoriteIds.includes(camper.id));
+    }
+
+    // Otherwise apply normal filters
+    return campers.filter(camper => {
+      // Location filter
+      const matchesLocation = !filters?.location || 
+        camper.location.toLowerCase().includes(filters.location.toLowerCase());
+
+      // Form filter
+      const matchesForm = !filters?.form || filters.form === camper.form;
+
+      // Transmission filter
+      const matchesTransmission = !filters?.transmission || 
+        filters.transmission === camper.transmission;
+
+      // Engine filter
+      const matchesEngine = !filters?.engine || filters.engine === camper.engine;
+
+      // Features filter
+      const matchesFeatures = !filters?.features?.length || 
+        filters.features.every(feature => camper.features[feature]);
+
+      return matchesLocation && matchesForm && matchesTransmission && 
+             matchesEngine && matchesFeatures;
+    });
+  }, [campers, filters, showFavorites, favoriteIds]);
 
   if (error) {
     return <div className={styles.error}>Error: {error}</div>;
@@ -367,17 +403,27 @@ const Catalog = () => {
           </button>
         )}
 
-        <button 
-          className={styles.resetFiltersButton}
-          onClick={handleResetFilters}
-        >
-          Reset All Filters
-        </button>
+        <div className={styles.filtersActions}>
+          <button 
+            className={styles.resetButton}
+            onClick={() => dispatch(resetFilters())}
+          >
+            Reset All Filters
+          </button>
+          {favoriteIds.length > 0 && (
+            <button
+              className={`${styles.resetButton} ${showFavorites ? styles.activeFilter : ''}`}
+              onClick={() => dispatch(toggleShowFavorites())}
+            >
+              Show Favorites ({favoriteIds.length})
+            </button>
+          )}
+        </div>
       </div>
 
       <div className={styles.variantsColumn}>
         <div className={styles.campersGrid}>
-          {campers.map((camper) => (
+          {filteredCampers.map((camper) => (
             <div key={camper.id} className={styles.camperCard}>
               <div className={styles.cardImageContainer}>
                 <img 
@@ -395,7 +441,12 @@ const Catalog = () => {
                   <h3>{camper.name}</h3>
                   <div className={styles.priceHeart}>
                     <span className={styles.price}>€{camper.price.toFixed(2)}</span>
-                    <button className={styles.heartButton}>♡</button>
+                    <button 
+                      className={`${styles.heartButton} ${favoriteIds.includes(camper.id) ? styles.heartActive : ''}`}
+                      onClick={() => dispatch(toggleFavorite(camper.id))}
+                    >
+                      {favoriteIds.includes(camper.id) ? '♥' : '♡'}
+                    </button>
                   </div>
                 </div>
                 <div className={styles.location}>
