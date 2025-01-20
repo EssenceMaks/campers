@@ -67,17 +67,17 @@ export const searchCampers = createAsyncThunk(
         if (!hasAllEquipment) return false;
 
         // Фильтр по типу двигателя
-        if (filters.engine && camper.features.engine !== filters.engine) {
+        if (filters.engines.length > 0 && !filters.engines.includes(camper.features.engine)) {
           return false;
         }
 
         // Фильтр по трансмиссии
-        if (filters.transmission && camper.features.transmission !== filters.transmission) {
+        if (filters.transmissions.length > 0 && !filters.transmissions.includes(camper.features.transmission)) {
           return false;
         }
 
         // Фильтр по типу транспортного средства
-        if (filters.form && camper.form !== filters.form) {
+        if (filters.forms.length > 0 && !filters.forms.includes(camper.form)) {
           return false;
         }
 

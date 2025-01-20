@@ -113,7 +113,7 @@ const Catalog = () => {
   };
 
   const handleEngineChange = (value) => {
-    dispatch(setEngineFilter(value === filters.engine ? '' : value));
+    dispatch(setEngineFilter(value));
     if (isAutoSearch) {
       dispatch(resetPagination());
       dispatch(searchCampers({ page: 1 }));
@@ -121,7 +121,7 @@ const Catalog = () => {
   };
 
   const handleTransmissionChange = (value) => {
-    dispatch(setTransmissionFilter(value === filters.transmission ? '' : value));
+    dispatch(setTransmissionFilter(value));
     if (isAutoSearch) {
       dispatch(resetPagination());
       dispatch(searchCampers({ page: 1 }));
@@ -129,7 +129,7 @@ const Catalog = () => {
   };
 
   const handleFormChange = (value) => {
-    dispatch(setFormFilter(value === filters.form ? '' : value));
+    dispatch(setFormFilter(value));
     if (isAutoSearch) {
       dispatch(resetPagination());
       dispatch(searchCampers({ page: 1 }));
@@ -247,9 +247,8 @@ const Catalog = () => {
           {ENGINE_OPTIONS.map(({ value, label }) => (
             <label key={value} className={styles.filterLabel}>
               <input
-                type="radio"
-                name="engine"
-                checked={filters.engine === value}
+                type="checkbox"
+                checked={filters.engines.includes(value)}
                 onChange={() => handleEngineChange(value)}
               />
               {label}
@@ -263,9 +262,8 @@ const Catalog = () => {
           {TRANSMISSION_OPTIONS.map(({ value, label }) => (
             <label key={value} className={styles.filterLabel}>
               <input
-                type="radio"
-                name="transmission"
-                checked={filters.transmission === value}
+                type="checkbox"
+                checked={filters.transmissions.includes(value)}
                 onChange={() => handleTransmissionChange(value)}
               />
               {label}
@@ -279,9 +277,8 @@ const Catalog = () => {
           {VEHICLE_TYPE_OPTIONS.map(({ value, label }) => (
             <label key={value} className={styles.filterLabel}>
               <input
-                type="radio"
-                name="vehicleType"
-                checked={filters.form === value}
+                type="checkbox"
+                checked={filters.forms.includes(value)}
                 onChange={() => handleFormChange(value)}
               />
               {label}

@@ -13,9 +13,9 @@ const initialState = {
     gas: false,
     water: false
   },
-  engine: "", // "petrol", "diesel", "hybrid", "gas"
-  transmission: "", // "automatic" или "manual"
-  form: "", // "alcove", "fullyIntegrated", "panelTruck"
+  engines: [], // массив выбранных типов двигателей
+  transmissions: [], // массив выбранных типов трансмиссий
+  forms: [], // массив выбранных типов кузова
   isAutoSearch: true
 };
 
@@ -31,13 +31,28 @@ const filtersSlice = createSlice({
       state.equipment[name] = value;
     },
     setEngineFilter: (state, action) => {
-      state.engine = action.payload;
+      const value = action.payload;
+      if (state.engines.includes(value)) {
+        state.engines = state.engines.filter(engine => engine !== value);
+      } else {
+        state.engines.push(value);
+      }
     },
     setTransmissionFilter: (state, action) => {
-      state.transmission = action.payload;
+      const value = action.payload;
+      if (state.transmissions.includes(value)) {
+        state.transmissions = state.transmissions.filter(trans => trans !== value);
+      } else {
+        state.transmissions.push(value);
+      }
     },
     setFormFilter: (state, action) => {
-      state.form = action.payload;
+      const value = action.payload;
+      if (state.forms.includes(value)) {
+        state.forms = state.forms.filter(form => form !== value);
+      } else {
+        state.forms.push(value);
+      }
     },
     toggleAutoSearch: (state) => {
       state.isAutoSearch = !state.isAutoSearch;
