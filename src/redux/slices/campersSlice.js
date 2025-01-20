@@ -45,45 +45,59 @@ const initialState = {
 
 export const searchCampers = createAsyncThunk(
   "campers/searchCampers",
-  async ({ page = 1 }, { getState }) => {
+  async ({ page = 1, loadAll = false }, { getState }) => {
     try {
       const response = await axios.get(`${BASE_URL}/campers`);
       const { items = [], total = 0 } = response.data;
       const filters = getState().filters;
+      const showFavorites = getState().favorites.showFavorites;
       
       const transformedItems = items.map(transformCamperForCatalog);
-      const filteredItems = transformedItems.filter(camper => {
-        // Фильтр по локации
-        if (filters.location && !camper.location.toLowerCase().includes(filters.location.toLowerCase())) {
-          return false;
-        }
+      
+      // If loadAll is true or showing favorites, skip filtering
+      let filteredItems = transformedItems;
+      if (!loadAll && !showFavorites) {
+        filteredItems = transformedItems.filter(camper => {
+          // Фильтр по локации
+          if (filters.location && !camper.location.toLowerCase().includes(filters.location.toLowerCase())) {
+            return false;
+          }
 
-        // Фильтр по оборудованию
-        const hasAllEquipment = Object.entries(filters.equipment)
-          .every(([key, isSelected]) => {
-            if (!isSelected) return true;
-            return camper.features[key] === true;
-          });
+          // Фильтр по оборудованию
+          const hasAllEquipment = Object.entries(filters.equipment)
+            .every(([key, isSelected]) => {
+              if (!isSelected) return true;
+              return camper.features[key] === true;
+            });
 
-        if (!hasAllEquipment) return false;
+          if (!hasAllEquipment) return false;
 
-        // Фильтр по типу двигателя
-        if (filters.engines.length > 0 && !filters.engines.includes(camper.features.engine)) {
-          return false;
-        }
+          // Фильтр по типу двигателя
+          if (filters.engines.length > 0 && !filters.engines.includes(camper.features.engine)) {
+            return false;
+          }
 
-        // Фильтр по трансмиссии
-        if (filters.transmissions.length > 0 && !filters.transmissions.includes(camper.features.transmission)) {
-          return false;
-        }
+          // Фильтр по трансмиссии
+          if (filters.transmissions.length > 0 && !filters.transmissions.includes(camper.features.transmission)) {
+            return false;
+          }
 
-        // Фильтр по типу транспортного средства
-        if (filters.forms.length > 0 && !filters.forms.includes(camper.form)) {
-          return false;
-        }
+          // Фильтр по типу транспортного средства
+          if (filters.forms.length > 0 && !filters.forms.includes(camper.form)) {
+            return false;
+          }
 
-        return true;
-      });
+          return true;
+        });
+      }
+      
+      // If loadAll is true, return all items without pagination
+      if (loadAll) {
+        return {
+          items: filteredItems,
+          total: filteredItems.length
+        };
+      }
       
       // Пагинация
       const startIndex = (page - 1) * initialState.pagination.limit;
