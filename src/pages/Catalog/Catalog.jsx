@@ -6,6 +6,7 @@ import {
   setLocationFilter,
   setEquipmentFilter,
   setVehicleTypeFilter,
+  toggleAutoSearch,
   resetFilters,
   setPage, 
   resetPagination, 
@@ -27,7 +28,7 @@ const Catalog = () => {
   const campers = useSelector(selectCampers);
   const pagination = useSelector(selectPagination);
   const hasMore = useSelector(selectHasMore);
-  const { isLoading, error, filters } = useSelector(state => state.campers);
+  const { isLoading, error, filters, isAutoSearch } = useSelector(state => state.campers);
   const locationSuggestions = useSelector(selectLocationSuggestions);
   const isLoadingLocations = useSelector(selectLocationsLoading);
   
@@ -62,14 +63,29 @@ const Catalog = () => {
 
   const handleEquipmentChange = (name) => {
     dispatch(setEquipmentFilter({ name, value: !filters.equipment[name] }));
-    dispatch(resetPagination());
-    dispatch(searchCampers({ page: 1 }));
+    if (isAutoSearch) {
+      dispatch(resetPagination());
+      dispatch(searchCampers({ page: 1 }));
+    }
   };
 
   const handleVehicleTypeChange = (name) => {
     dispatch(setVehicleTypeFilter({ name, value: !filters.vehicleType[name] }));
-    dispatch(resetPagination());
-    dispatch(searchCampers({ page: 1 }));
+    if (isAutoSearch) {
+      dispatch(resetPagination());
+      dispatch(searchCampers({ page: 1 }));
+    }
+  };
+
+  const handleSearchModeToggle = () => {
+    dispatch(toggleAutoSearch());
+  };
+
+  const handleManualSearch = () => {
+    if (!isAutoSearch) {
+      dispatch(resetPagination());
+      dispatch(searchCampers({ page: 1 }));
+    }
   };
 
   const handleResetFilters = () => {
@@ -178,6 +194,32 @@ const Catalog = () => {
             </label>
           ))}
         </div>
+
+        {/* Search Mode Toggle */}
+        <div className={styles.searchModeContainer}>
+          <button 
+            className={`${styles.searchModeButton} ${isAutoSearch ? styles.active : ''}`}
+            onClick={handleSearchModeToggle}
+          >
+            Auto-Search
+          </button>
+          <span className={styles.searchModeDivider}>|</span>
+          <button 
+            className={`${styles.searchModeButton} ${!isAutoSearch ? styles.active : ''}`}
+            onClick={handleSearchModeToggle}
+          >
+            Search
+          </button>
+        </div>
+
+        {!isAutoSearch && (
+          <button 
+            className={styles.searchButton}
+            onClick={handleManualSearch}
+          >
+            Search Campers
+          </button>
+        )}
 
         <button 
           className={styles.resetFiltersButton}

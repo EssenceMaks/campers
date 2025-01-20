@@ -47,20 +47,20 @@ const initialState = {
   filters: {
     location: '',
     equipment: {
-      ac: false,
-      tv: false,
+      AC: false,
+      TV: false,
       kitchen: false,
       shower: false,
       heater: false,
       toilet: false,
-      wifi: false
+      wifi: false,
     },
     vehicleType: {
       van: false,
-      rv: false,
+      RV: false,
       motorhome: false,
       campervan: false,
-      travelTrailer: false
+      travelTrailer: false,
     }
   },
   pagination: {
@@ -68,7 +68,8 @@ const initialState = {
     per_page: 4,
     total: 0,
   },
-  hasMore: true
+  hasMore: true,
+  isAutoSearch: true
 };
 
 const handleLoading = (state) => {
@@ -100,6 +101,9 @@ const campersSlice = createSlice({
     setVehicleTypeFilter: (state, action) => {
       const { name, value } = action.payload;
       state.filters.vehicleType[name] = value;
+    },
+    toggleAutoSearch: (state) => {
+      state.isAutoSearch = !state.isAutoSearch;
     },
     resetFilters: (state) => {
       state.filters = initialState.filters;
@@ -172,6 +176,7 @@ export const {
   setLocationFilter,
   setEquipmentFilter,
   setVehicleTypeFilter,
+  toggleAutoSearch,
   resetFilters,
   setPage,
   resetPagination,

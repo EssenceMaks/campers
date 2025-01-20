@@ -313,3 +313,50 @@
   padding: 2rem;
   font-size: 1.2rem;
 }
+
+.searchModeContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  padding: 8px;
+  background: #2a2a2a;
+  border-radius: 4px;
+}
+
+.searchModeButton {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  color: #666;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.searchModeButton.active {
+  color: #249715;
+}
+
+.searchModeDivider {
+  color: #333;
+  margin: 0 8px;
+}
+
+.searchButton {
+  width: 100%;
+  padding: 12px;
+  background: #249715;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+}
+
+.searchButton:hover {
+  background: #1b7110;
+}
