@@ -22,24 +22,16 @@ const transformCamperForCatalog = (camper) => ({
 
 export const searchCampers = createAsyncThunk(
   "campers/searchCampers",
-  async ({ page = 1, filters = {} }) => {
+  async ({ page = 1 }) => {
     try {
-      console.log("Fetching campers with params:", { page, filters });
       const response = await axios.get(`${BASE_URL}/campers`);
-      console.log("API Response:", response.data);
-      
-      // Получаем items из response.data
       const { items = [], total = 0 } = response.data;
-      
-      // Преобразуем данные для каталога
-      const transformedItems = items.map(transformCamperForCatalog);
-      
       return {
-        items: transformedItems,
+        items: items.map(transformCamperForCatalog),
         total
       };
     } catch (error) {
-      console.error("API Error:", error.response || error);
+      console.error("API Error:", error);
       throw error;
     }
   }
@@ -47,69 +39,81 @@ export const searchCampers = createAsyncThunk(
 
 const initialState = {
   items: [],
-  status: 'idle',
+  camper: {},
+  isLoading: false,
   error: null,
-  page: 1,
-  hasMore: true,
-  total: 0,
-  filters: {
-    equipment: {
-      ac: false,
-      automatic: false,
-      kitchen: false,
-      tv: false,
-      bathroom: false,
-    },
-    vehicleType: {
-      van: false,
-      fullyIntegrated: false,
-      alcove: false,
-    },
+  pagination: {
+    page: 1,
+    per_page: 4,
+    total: 0,
   },
+  hasMore: true
 };
+
+const handleLoading = (state) => {
+  state.isLoading = true;
+  state.error = null;
+}
+
+const handleError = (state, action) => {
+  state.isLoading = false;
+  state.error = action.error.message;
+}
+
+const handleFulfilled = (state) => {
+  state.isLoading = false;
+  state.error = null;
+}
 
 const campersSlice = createSlice({
   name: "campers",
   initialState,
   reducers: {
-    setFilter: (state, action) => {
-      const { category, name, value } = action.payload;
-      state.filters[category][name] = value;
+    setPage: (state, action) => {
+      state.pagination.page = action.payload;
     },
-    resetFilters: (state) => {
-      state.filters = initialState.filters;
-      state.page = 1;
+    resetPagination: (state) => {
+      state.pagination = {
+        page: 1,
+        per_page: 4,
+        total: 0,
+      };
+      state.hasMore = true;
+    },
+    resetCampers: (state) => {
+      state.items = [];
+      state.hasMore = true;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(searchCampers.pending, (state) => {
-        state.status = 'loading';
-        state.error = null;
-      })
+      .addCase(searchCampers.pending, handleLoading)
+      .addCase(searchCampers.rejected, handleError)
       .addCase(searchCampers.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.error = null;
-        
+        handleFulfilled(state);
         const { items = [], total = 0 } = action.payload;
         
-        if (state.page === 1) {
+        // If it's the first page, replace items
+        if (state.pagination.page === 1) {
           state.items = items;
         } else {
-          state.items = [...state.items, ...items];
+          // For subsequent pages, append new items
+          // Create a Set of existing IDs to prevent duplicates
+          const existingIds = new Set(state.items.map(item => item.id));
+          const newItems = items.filter(item => !existingIds.has(item.id));
+          state.items = [...state.items, ...newItems];
         }
         
-        state.total = total;
-        state.hasMore = items.length > 0;
-        state.page += 1;
-      })
-      .addCase(searchCampers.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-        console.error("Redux Error:", action.error);
+        state.pagination.total = total;
+        state.hasMore = items.length === state.pagination.per_page;
       });
   },
 });
 
-export const { setFilter, resetFilters } = campersSlice.actions;
+export const selectCampers = (state) => state.campers.items;
+export const selectPagination = (state) => state.campers.pagination;
+export const selectCampersQuery = (state) => state.campers;
+export const selectHasMore = (state) => state.campers.hasMore;
+
+export const { setPage, resetPagination, resetCampers } = campersSlice.actions;
 export default campersSlice.reducer;
