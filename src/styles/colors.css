@@ -1,0 +1,17 @@
+:root {
+  /* Primary Colors */
+  --color-primary-dark: #101828;    /* Dark Navy */
+  --color-primary: #475467;         /* Navy Blue */
+  --color-primary-light: #8C717B;   /* Gray */
+
+  /* Accent Colors */
+  --color-accent: #E44848;          /* Red */
+  --color-accent-dark: #D84343;     /* Dark Red */
+  --color-accent-light: #FFC531;    /* Yellow */
+
+  /* Neutral Colors */
+  --color-neutral-light: #DADDE1;   /* Light Gray */
+  --color-neutral-lighter: #F2F4F7;  /* Very Light Gray */
+  --color-neutral-lightest: #F7F7F7; /* Almost White */
+  --color-white: #FFFFFF;           /* White */
+}
