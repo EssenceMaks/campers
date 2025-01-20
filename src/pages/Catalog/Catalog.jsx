@@ -206,7 +206,7 @@ const Catalog = () => {
                 <div className={styles.camperHeader}>
                   <h3>{camper.name}</h3>
                   <div className={styles.priceHeart}>
-                    <span className={styles.price}>€{camper.price}</span>
+                    <span className={styles.price}>€{camper.price.toFixed(2)}</span>
                     <button className={styles.heartButton}>♡</button>
                   </div>
                 </div>
@@ -214,6 +214,7 @@ const Catalog = () => {
                   <span className={styles.rating}>★ {camper.rating}</span>
                   <span className={styles.locationText}>{camper.location}</span>
                 </div>
+                <p className={styles.description}>{camper.description}</p>
                 <div className={styles.features}>
                   {camper.features.transmission && (
                     <span className={styles.feature}>

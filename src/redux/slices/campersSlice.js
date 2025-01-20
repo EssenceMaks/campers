@@ -10,7 +10,9 @@ const transformCamperForCatalog = (camper) => ({
   price: camper.price,
   rating: camper.rating,
   location: camper.location,
-  description: camper.description,
+  description: camper.description?.length > 150 
+    ? `${camper.description.slice(0, 150)}...` 
+    : camper.description || '',
   mainImage: camper.gallery?.[0]?.original,
   features: {
     transmission: camper.transmission,
