@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { 
@@ -74,6 +74,21 @@ const Catalog = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isInvalidCity, setIsInvalidCity] = useState(false);
 
+  const locationInputRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (locationInputRef.current && !locationInputRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   useEffect(() => {
     dispatch(resetPagination());
     dispatch(resetCampers());
@@ -84,23 +99,33 @@ const Catalog = () => {
     const value = e.target.value;
     setLocationInput(value);
     setShowSuggestions(true);
-    setIsInvalidCity(false);
     
-    // Если поле пустое, сбрасываем фильтр локации
+    // Если поле пустое, сбрасываем фильтр и валидацию
     if (!value) {
+      setIsInvalidCity(false);
       dispatch(setLocationFilter(''));
       if (isAutoSearch) {
         dispatch(resetPagination());
         dispatch(searchCampers({ page: 1 }));
       }
+      return;
     }
     
     if (value.length >= 2) {
       dispatch(searchLocations(value));
+      // Проверяем валидность после небольшой задержки, чтобы дождаться результатов поиска
+      setTimeout(() => {
+        if (!locationSuggestions || locationSuggestions.length === 0) {
+          setIsInvalidCity(true);
+        } else {
+          setIsInvalidCity(false);
+        }
+      }, 300);
     } else {
       dispatch(clearSuggestions());
+      setIsInvalidCity(true);
     }
-  }, [dispatch, isAutoSearch]);
+  }, [dispatch, isAutoSearch, locationSuggestions]);
 
   const handleLocationSelect = (location) => {
     setLocationInput(location);
@@ -204,7 +229,7 @@ const Catalog = () => {
         {/* Location Filter */}
         <div className={styles.filterSection}>
           <h3>Location</h3>
-          <div className={styles.locationInputContainer}>
+          <div className={styles.locationInputContainer} ref={locationInputRef}>
             <input
               type="text"
               value={locationInput}
