@@ -127,6 +127,24 @@
 .filterLabel {
   display: flex;
   align-items: center;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.filterLabel input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.filterLabel svg {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  fill: currentColor;
+}
+
+.filterLabel {
+  display: flex;
+  align-items: center;
   gap: 12px;
   margin-bottom: 12px;
   cursor: pointer;

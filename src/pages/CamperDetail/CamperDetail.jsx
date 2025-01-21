@@ -117,26 +117,104 @@ const CamperDetail = () => {
             {activeTab === 'features' && (
               <div className={styles.features}>
                 <div className={styles.featureIcons}>
-                  {Object.entries(camper.features || {}).map(([key, value]) => 
-                    value && (
+                  {Object.entries(camper.features || {}).map(([key, value]) => {
+                    if (!value) return null;
+                    
+                    let iconName = '';
+                    let label = '';
+                    
+                    switch(key) {
+                      // Vehicle Type
+                      case 'form':
+                        switch(value) {
+                          case 'alcove':
+                            iconName = 'icon-bi_grid';
+                            label = 'Alcove';
+                            break;
+                          case 'fullyIntegrated':
+                            iconName = 'icon-bi_grid-3x3';
+                            label = 'Fully Integrated';
+                            break;
+                          case 'panelTruck':
+                            iconName = 'icon-bi_grid-1x2';
+                            label = 'Panel Truck';
+                            break;
+                          default:
+                            iconName = 'icon-bi_grid';
+                            label = value;
+                        }
+                        break;
+
+                      // Transmission
+                      case 'transmission':
+                        iconName = 'icon-diagram';
+                        label = value === 'automatic' ? 'Automatic' : 'Manual';
+                        break;
+
+                      // Engine types
+                      case 'engine':
+                        iconName = 'icon-fuel';
+                        label = value.charAt(0).toUpperCase() + value.slice(1);
+                        break;
+
+                      // Equipment
+                      case 'AC':
+                        iconName = 'icon-wind';
+                        label = 'Air Conditioning';
+                        break;
+                      case 'bathroom':
+                        iconName = 'icon-shower';
+                        label = 'Bathroom';
+                        break;
+                      case 'kitchen':
+                        iconName = 'icon-cup-hot';
+                        label = 'Kitchen';
+                        break;
+                      case 'TV':
+                        iconName = 'icon-tv';
+                        label = 'TV';
+                        break;
+                      case 'radio':
+                        iconName = 'icon-radio';
+                        label = 'Radio';
+                        break;
+                      case 'refrigerator':
+                        iconName = 'icon-fridge';
+                        label = 'Refrigerator';
+                        break;
+                      case 'microwave':
+                        iconName = 'icon-microwave';
+                        label = 'Microwave';
+                        break;
+                      case 'gas':
+                        iconName = 'icon-cup-hot';
+                        label = 'Gas';
+                        break;
+                      case 'water':
+                        iconName = 'icon-water';
+                        label = 'Water';
+                        break;
+                      default:
+                        iconName = `icon-${key}`;
+                        label = key.charAt(0).toUpperCase() + key.slice(1);
+                    }
+                    
+                    return (
                       <span key={key} className={styles.featureIcon}>
-                        <Icon name={`icon-${key}`} className={styles.icon} />
-                        {key === 'transmission' && 'Automatic'}
-                        {key === 'AC' && 'AC'}
-                        {key === 'engine' && 'Petrol'}
-                        {key === 'kitchen' && 'Kitchen'}
-                        {key === 'radio' && 'Radio'}
+                        <Icon name={iconName} className={styles.icon} />
+                        {label}
                       </span>
-                    )
-                  )}
+                    );
+                  })}
                 </div>
+                <div className={styles.vehicleDetails}>Vehicle details</div>
                 <div className={styles.details}>
-                  <p><strong>Form:</strong> {camper.form || 'Panel truck'}</p>
-                  <p><strong>Length:</strong> {camper.length || '5.4 m'}</p>
-                  <p><strong>Width:</strong> {camper.width || '2.01 m'}</p>
-                  <p><strong>Height:</strong> {camper.height || '2.05 m'}</p>
-                  <p><strong>Tank:</strong> {camper.tank || '132 l'}</p>
-                  <p><strong>Consumption:</strong> {camper.consumption || '12.4l/100km'}</p>
+                  <p><strong>Form</strong> {camper.form || 'Panel truck'}</p>
+                  <p><strong>Length</strong> {camper.length || '5.4 m'}</p>
+                  <p><strong>Width</strong> {camper.width || '2.01 m'}</p>
+                  <p><strong>Height</strong> {camper.height || '2.05 m'}</p>
+                  <p><strong>Tank</strong> {camper.tank || '132 l'}</p>
+                  <p><strong>Consumption</strong> {camper.consumption || '12.4l/100km'}</p>
                 </div>
               </div>
             )}

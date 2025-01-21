@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { 
   searchCampers,
   selectCampers,
@@ -494,9 +493,14 @@ const Catalog = () => {
                     </span>
                   )}
                 </div>
-                <Link to={`/catalog/${camper.id}`} className={styles.showMore}>
+                <a 
+                  href={`/catalog/${camper.id}`}
+                  className={styles.showMore}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   Show more
-                </Link>
+                </a>
               </div>
             </div>
           ))}
