@@ -1,10 +1,93 @@
 .home {
-  padding: 40px 0;
-  text-align: center;
+  min-height: calc(100vh - 72px);
+  min-width: 900px;
+  max-width: 1440px;
+  margin: 0 auto;
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+    url('../../assets/images/hero/hero.webp');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-color: var(--color-neutral-lightest);
+  display: flex;
+  align-items: center;
+  padding: 0 64px;
+  position: relative;
+}
+
+@media (min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+  .home {
+    background-image: 
+      linear-gradient(rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.0)),
+      url('../../assets/images/hero/hero-2x.webp');
+  }
+}
+
+@supports (background-image: -webkit-image-set(url('') 1x)) {
+  .home {
+    background-image: 
+      linear-gradient(rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.0)),
+      -webkit-image-set(
+        url('../../assets/images/hero/hero.webp') 1x,
+        url('../../assets/images/hero/hero-2x.webp') 2x
+      );
+  }
 }
 
 .home h1 {
   font-size: 2.5rem;
   margin-bottom: 2rem;
   color: #333;
+}
+
+.heroContent {
+  position: absolute;
+  top: 260px;
+  left: 64px;
+  width: 571px;
+  height: 176px;
+  text-align: left;
+  color: var(--color-white);
+  z-index: 1;
+}
+
+.heroTitle {
+  font-weight: 600;
+  font-size: 48px;
+  height: 55px;
+  line-height: 0.67;
+  color: var(--color-white);
+}
+
+.heroText {
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.33;
+  color: var(--color-white);
+}
+
+
+.viewNowButton {
+  display: inline-block;
+  position: absolute;
+    left: 0px;
+    bottom: 0px;
+  padding: 14px 44px;
+  background-color: var(--color-accent);
+  color: var(--color-white);
+  text-decoration: none;
+  border-radius: 200px;
+  font-size: 16px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  transition: background-color 0.7s ease, border-color 0.7s ease, font-size 0.7s ease;
+}
+
+.viewNowButton:hover {
+  background-color: var(--color-accent-dark);
+  color: var(--color-white);
+  text-decoration: none;
+  border-color: var(--color-white);
+  font-size: 17px;
 }
