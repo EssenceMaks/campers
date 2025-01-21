@@ -494,7 +494,7 @@ const Catalog = () => {
                     </span>
                   )}
                 </div>
-                <Link to={`/camper/${camper.id}`} className={styles.showMore}>
+                <Link to={`/catalog/${camper.id}`} className={styles.showMore}>
                   Show more
                 </Link>
               </div>

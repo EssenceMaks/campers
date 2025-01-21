@@ -1,16 +1,368 @@
-.camperDetail {
-  padding: 40px 0;
-  max-width: 800px;
+/* Сетка главного контента */
+.main {
+  display: block;
+  padding: 64px;
+  max-width: 1440px;
   margin: 0 auto;
+  background-color: var(--color-white);
+  
 }
 
-.camperDetail h1 {
-  margin-bottom: 2rem;
+/* Основной контейнер для контента */
+.mainblock {
+  display: grid;
+  grid-auto-columns: 1fr 1fr;
+  grid-template-areas:
+    "title favorite"
+    "location favorite"
+    "price favorite"
+    "gallery gallery"
+    "description description"
+    "nav nav";
+  gap: 0px;
+}
+
+.title {
+  grid-area: title;
+  font-size: 32px;
+  font-weight: bold;
+  text-align: left;
+  margin: 0;
+  color: var(--color-primary-dark);
+}
+
+.locationContainer {
+  grid-area: location;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+}
+
+.reviewsrating, .location {
+  display: flex;
+  align-items: center;
+  font-size: 17px;
+  gap: 8px;
+  text-align: left;
+  color: var(--color-primary-dark);
+}
+
+.reviewsrating span:first-child {
+  color: #ffd700;
+}
+
+.price {
+  grid-area: price;
+  font-size: 32px;
+  font-weight: bold;
+  text-align: left;
+  color: var(--color-primary-dark);
+  margin: 0;
+}
+
+
+/* Галерея */
+.pictures {
+  grid-area: gallery;
+  margin: 28px 0;
+}
+  .pictures img {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    object-fit: none;
+    border-radius: 8px;
+    transition: transform 0.2s;
+    cursor: pointer;
+  }
+  .pictures img:hover {
+    transform: scale(1.05);
+    
+  }
+
+/* Описание */
+.description {
+  grid-area: description;
+  font-size: 17px;
+  text-align: left;
+  padding-bottom: 24px;
+}
+
+.description p {
+  margin: 0;
+  line-height: 1.6;
   color: #333;
-  text-align: center;
 }
 
-.camperDetail p {
-  font-size: 1.1rem;
+
+/* Боковая колонка */
+.containerTabs {
+  grid-area: nav;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "navtabs navtabs"
+    "content form";
+  gap: 24px;
+}
+
+.tabs {
+  grid-area: navtabs;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  border-bottom: 2px solid var(--color-neutral-lighter);
+  position: relative;
+}
+
+.tabs::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: var(--tab-width, 0px);
+  height: 6px;
+  background-color: var(--color-accent-dark);
+  transform: translateX(var(--tab-left, 0px));
+  transition: transform 0.3s ease-in-out;
+}
+
+.tabsList {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  gap: 10px;
+  width: fit-content;
+  height: fit-content;
+  position: relative;
+}
+
+.tabsList ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tabsList li {
+  cursor: pointer;
+  margin: 10px 15px;
+  color: var(--color-primary-dark);
+  font-weight: 500;
+  transition: all 0.3s;
+  flex: 1;
+  text-align: center;
+  position: relative;
+  list-style: none;
+}
+
+.tabsList li:hover {
+  color: var(--color-accent-dark);
+}
+
+.tabsList li.activeTab {
+  color: var(--color-primary-dark);
+}
+
+.favoriteIcon {
+  cursor: pointer;
+  font-size: 24px;
+  color: var(--color-accent-dark);
+  margin-left: auto;
+  transition: all 0.1s ease;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.favoriteText {
+  font-size: 16px;
+  color: var(--color-primary-dark);
+}
+
+.favoriteIcon:hover {
+  font-weight: bold;
+}
+
+.tabsContent {
+  grid-area: content;
+  display: grid;
+  gap: 20px;
+}
+
+.features {
+  display: grid;
+  gap: 20px;
+  background-color: var(--color-neutral-lighter);
+  color: var(--color-primary-dark);
+  font-weight: 500;
+}
+
+.featureIcons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 10px;
+}
+
+.featureIcons span {
+  background-color: #f0f0f0;
+  padding: 8px 12px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 14px;
+  color: #333;
+  text-transform: capitalize;
+}
+
+.details {
+  display: grid;
+  gap: 10px;
+}
+
+.details p {
+  margin: 0;
+  padding: 8px;
+  background-color: rgb(190, 211, 190);
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.details strong {
+  color: var(--color-primary-dark);
+}
+
+.bookingForm {
+  grid-area: form;
+  background-color: #f8f8f8;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.bookingForm h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.bookingForm p {
+  margin: 0 0 15px;
   color: #666;
+}
+
+.bookingForm form {
+  display: grid;
+  gap: 10px;
+}
+
+.bookingForm input,
+.bookingForm textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.bookingForm textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.bookingForm button {
+  background-color: #007b5e;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.bookingForm button:hover {
+  background-color: #005a40;
+}
+
+/* Отзывы */
+.reviews {
+  display: grid;
+  gap: 15px;
+}
+
+.review {
+  background-color: #f8f8f8;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.reviewHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.reviewAuthor {
+  font-weight: 500;
+  color: #333;
+}
+
+.reviewRating {
+  color: #ffd700;
+}
+
+.reviewText {
+  margin: 0;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* Состояния загрузки и ошибок */
+.loading,
+.error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  font-size: 18px;
+}
+
+.loading {
+  color: #666;
+}
+
+.error {
+  color: #ff4d4d;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .main {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+
+  .infoHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .price {
+    margin-top: 10px;
+  }
+
+  .tabsList {
+    flex-direction: column;
+  }
+
+  .featureIcons {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
