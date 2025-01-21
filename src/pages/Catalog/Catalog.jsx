@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import Icon from '../../components/Icon/Icon';
 import { 
   searchCampers,
   selectCampers,
@@ -31,33 +31,33 @@ import { toggleFavorite, toggleShowFavorites, selectFavorites, selectShowFavorit
 import styles from './Catalog.module.css';
 
 const EQUIPMENT_OPTIONS = [
-  { key: 'AC', label: 'Air Conditioning' },
-  { key: 'bathroom', label: 'Bathroom' },
-  { key: 'kitchen', label: 'Kitchen' },
-  { key: 'TV', label: 'TV' },
-  { key: 'radio', label: 'Radio' },
-  { key: 'refrigerator', label: 'Refrigerator' },
-  { key: 'microwave', label: 'Microwave' },
-  { key: 'gas', label: 'Gas' },
-  { key: 'water', label: 'Water' }
+  { key: 'AC', label: 'Air Conditioning', icon: 'icon-wind' },
+  { key: 'bathroom', label: 'Bathroom', icon: 'icon-shower' },
+  { key: 'kitchen', label: 'Kitchen', icon: 'icon-cup-hot' },
+  { key: 'TV', label: 'TV', icon: 'icon-tv' },
+  { key: 'radio', label: 'Radio', icon: 'icon-radio' },
+  { key: 'refrigerator', label: 'Refrigerator', icon: 'icon-fridge' },
+  { key: 'microwave', label: 'Microwave', icon: 'icon-microwave' },
+  { key: 'gas', label: 'Gas', icon: 'icon-cup-hot' },
+  { key: 'water', label: 'Water', icon: 'icon-water' }
 ];
 
 const ENGINE_OPTIONS = [
-  { value: 'petrol', label: 'Petrol' },
-  { value: 'diesel', label: 'Diesel' },
-  { value: 'hybrid', label: 'Hybrid' },
-  { value: 'gas', label: 'Gas' }
+  { value: 'petrol', label: 'Petrol', icon: 'icon-fuel' },
+  { value: 'diesel', label: 'Diesel', icon: 'icon-fuel' },
+  { value: 'hybrid', label: 'Hybrid', icon: 'icon-fuel' },
+  { value: 'gas', label: 'Gas', icon: 'icon-fuel' }
 ];
 
 const TRANSMISSION_OPTIONS = [
-  { value: 'automatic', label: 'Automatic' },
-  { value: 'manual', label: 'Manual' }
+  { value: 'automatic', label: 'Automatic', icon: 'icon-diagram' },
+  { value: 'manual', label: 'Manual', icon: 'icon-diagram' }
 ];
 
 const VEHICLE_TYPE_OPTIONS = [
-  { value: 'alcove', label: 'Alcove' },
-  { value: 'fullyIntegrated', label: 'Fully Integrated' },
-  { value: 'panelTruck', label: 'Panel Truck' }
+  { value: 'alcove', label: 'Alcove', icon: 'icon-bi_grid' },
+  { value: 'fullyIntegrated', label: 'Fully Integrated', icon: 'icon-bi_grid-3x3' },
+  { value: 'panelTruck', label: 'Panel Truck', icon: 'icon-bi_grid-1x2' }
 ];
 
 const Catalog = () => {
@@ -329,13 +329,14 @@ const Catalog = () => {
         {/* Equipment Filter */}
         <div className={styles.filterSection}>
           <h3>Vehicle Equipment</h3>
-          {EQUIPMENT_OPTIONS.map(({ key, label }) => (
+          {EQUIPMENT_OPTIONS.map(({ key, label, icon }) => (
             <label key={key} className={styles.filterLabel}>
               <input
                 type="checkbox"
                 checked={filters.equipment[key]}
                 onChange={() => handleEquipmentChange(key)}
               />
+              <Icon name={icon} />
               {label}
             </label>
           ))}
@@ -344,13 +345,14 @@ const Catalog = () => {
         {/* Engine Filter */}
         <div className={styles.filterSection}>
           <h3>Engine Type</h3>
-          {ENGINE_OPTIONS.map(({ value, label }) => (
+          {ENGINE_OPTIONS.map(({ value, label, icon }) => (
             <label key={value} className={styles.filterLabel}>
               <input
                 type="checkbox"
                 checked={filters.engines.includes(value)}
                 onChange={() => handleEngineChange(value)}
               />
+              <Icon name={icon} />
               {label}
             </label>
           ))}
@@ -359,13 +361,14 @@ const Catalog = () => {
         {/* Transmission Filter */}
         <div className={styles.filterSection}>
           <h3>Transmission</h3>
-          {TRANSMISSION_OPTIONS.map(({ value, label }) => (
+          {TRANSMISSION_OPTIONS.map(({ value, label, icon }) => (
             <label key={value} className={styles.filterLabel}>
               <input
                 type="checkbox"
                 checked={filters.transmissions.includes(value)}
                 onChange={() => handleTransmissionChange(value)}
               />
+              <Icon name={icon} />
               {label}
             </label>
           ))}
@@ -374,13 +377,14 @@ const Catalog = () => {
         {/* Vehicle Type Filter */}
         <div className={styles.filterSection}>
           <h3>Vehicle Type</h3>
-          {VEHICLE_TYPE_OPTIONS.map(({ value, label }) => (
+          {VEHICLE_TYPE_OPTIONS.map(({ value, label, icon }) => (
             <label key={value} className={styles.filterLabel}>
               <input
                 type="checkbox"
                 checked={filters.forms.includes(value)}
                 onChange={() => handleFormChange(value)}
               />
+              <Icon name={icon} />
               {label}
             </label>
           ))}
@@ -494,9 +498,14 @@ const Catalog = () => {
                     </span>
                   )}
                 </div>
-                <Link to={`/catalog/${camper.id}`} className={styles.showMore}>
+                <a 
+                  href={`/catalog/${camper.id}`}
+                  className={styles.showMore}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   Show more
-                </Link>
+                </a>
               </div>
             </div>
           ))}
