@@ -215,6 +215,40 @@
   text-transform: capitalize;
 }
 
+.featureIcon {
+  padding: 8px 16px;
+  background-color: var(--color-neutral-lighter);
+  border-radius: 20px;
+  margin: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: capitalize;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  fill: var(--color-primary-dark);
+  transition: all 0.2s ease;
+}
+
+.iconActive {
+  fill: var(--color-accent-dark);
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.locationIcon {
+  width: 24px;
+  height: 24px;
+  fill: var(--color-primary-dark);
+}
+
 .details {
   display: grid;
   gap: 10px;
@@ -301,23 +335,39 @@
 
 .reviewHeader {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
 }
 
 .reviewAuthor {
   font-weight: 500;
-  color: #333;
-}
-
-.reviewRating {
-  color: #ffd700;
+  color: var(--color-primary-dark);
+  background-color: var(--color-neutral-lighter);
+  padding: 4px 12px;
+  border-radius: 16px;
 }
 
 .reviewText {
   margin: 0;
-  color: #666;
-  line-height: 1.5;
+  color: var(--color-primary-dark);
+}
+
+.stars {
+  color: var(--color-accent-dark);
+  letter-spacing: 2px;
+}
+
+.noReviews {
+  text-align: center;
+  color: var(--color-primary-dark);
+  padding: 20px;
+  background-color: var(--color-neutral-lighter);
+  border-radius: 8px;
+}
+
+.reviewRating {
+  color: #ffd700;
 }
 
 /* Состояния загрузки и ошибок */

@@ -5,6 +5,7 @@ import { fetchCamperById } from '../../redux/slices/campersSlice';
 import { toggleFavorite, selectFavorites } from '../../redux/slices/favoritesSlice';
 import { selectSelectedCamper, selectCampersLoading, selectCampersError } from '../../redux/slices/campersSlice';
 import Gallery from '../../components/Gallery/Gallery';
+import Icon from '../../components/Icon/Icon';
 import styles from './CamperDetail.module.css';
 
 const CamperDetail = () => {
@@ -68,7 +69,7 @@ const CamperDetail = () => {
             <span>{camper.rating} ({camper.reviews?.length || 0} Reviews)</span>
           </div>
           <div className={styles.location}>
-            <span>📍</span>
+            <Icon name="icon-map" className={styles.locationIcon} />
             <span>{camper.location}</span>
           </div>
         </div>
@@ -98,7 +99,10 @@ const CamperDetail = () => {
             </ul>
             <div className={styles.favoriteIcon} onClick={() => dispatch(toggleFavorite(camper.id))}>
               {!favoriteIds.includes(camper.id) && <span className={styles.favoriteText}>Add to favorites</span>}
-              {favoriteIds.includes(camper.id) ? '♥' : '♡'}
+              <Icon 
+                name="icon-heart" 
+                className={`${styles.icon} ${favoriteIds.includes(camper.id) ? styles.iconActive : ''}`} 
+              />
             </div>
           </div>
         
@@ -108,31 +112,46 @@ const CamperDetail = () => {
                 <div className={styles.featureIcons}>
                   {Object.entries(camper.features || {}).map(([key, value]) => 
                     value && (
-                      <span key={key}>{key}</span>
+                      <span key={key} className={styles.featureIcon}>
+                        <Icon name={`icon-${key}`} className={styles.icon} />
+                        {key === 'transmission' && 'Automatic'}
+                        {key === 'AC' && 'AC'}
+                        {key === 'engine' && 'Petrol'}
+                        {key === 'kitchen' && 'Kitchen'}
+                        {key === 'radio' && 'Radio'}
+                      </span>
                     )
                   )}
                 </div>
                 <div className={styles.details}>
-                  {camper.form && <p><strong>Form:</strong> {camper.form}</p>}
-                  {camper.length && <p><strong>Length:</strong> {camper.length}</p>}
-                  {camper.width && <p><strong>Width:</strong> {camper.width}</p>}
-                  {camper.height && <p><strong>Height:</strong> {camper.height}</p>}
-                  {camper.tank && <p><strong>Tank:</strong> {camper.tank}</p>}
-                  {camper.consumption && <p><strong>Consumption:</strong> {camper.consumption}</p>}
+                  <p><strong>Form:</strong> {camper.form || 'Panel truck'}</p>
+                  <p><strong>Length:</strong> {camper.length || '5.4 m'}</p>
+                  <p><strong>Width:</strong> {camper.width || '2.01 m'}</p>
+                  <p><strong>Height:</strong> {camper.height || '2.05 m'}</p>
+                  <p><strong>Tank:</strong> {camper.tank || '132 l'}</p>
+                  <p><strong>Consumption:</strong> {camper.consumption || '12.4l/100km'}</p>
                 </div>
               </div>
             )}
             {activeTab === 'reviews' && (
               <div className={styles.reviews}>
-                {camper.reviews?.map((review, index) => (
+                {(camper.reviews || []).map((review, index) => (
                   <div key={index} className={styles.review}>
                     <div className={styles.reviewHeader}>
-                      <span className={styles.reviewAuthor}>{review.author}</span>
-                      <span className={styles.reviewRating}>★ {review.rating}</span>
+                      <span className={styles.reviewAuthor}>
+                        {String.fromCharCode(65 + index)} {/* A, B, C, ... */}
+                      </span>
+                      <div className={styles.stars}>
+                        {'★'.repeat(review.rating)}
+                        {'☆'.repeat(5 - review.rating)}
+                      </div>
                     </div>
                     <p className={styles.reviewText}>{review.text}</p>
                   </div>
                 ))}
+                {(!camper.reviews || camper.reviews.length === 0) && (
+                  <p className={styles.noReviews}>No reviews yet</p>
+                )}
               </div>
             )}
           </div>
