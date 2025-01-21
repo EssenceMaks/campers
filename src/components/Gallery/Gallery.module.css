@@ -65,55 +65,60 @@
   border-radius: 4px;
 }
 
-.modalImage:hover img {
-  transform: none;
-}
-
-.modalImage img:hover{
-  transform: none;
-}
-
 .modalButton {
   position: absolute;
-  background: white;
-  border: none;
-  
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 2px solid transparent;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   color: #333;
-  transition: background-color 0.7s ease, border-color 0.7s ease, font-size 0.7s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
-  .modalButton:hover {
-    border: 2px solid var(--color-accent-dark);
-  }
-  .modalButton span{
-    font-size: 28px;
-    transition: font-size 0.3s ease, transform 0.3s ease;
-  }
-  .modalButton:hover span{
-    font-size: 32px;
-    
-  }
 
+.modalButton:hover {
+  border-color: var(--color-accent);
+}
+
+.modalButton span {
+  font-size: 38px;
+  line-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  transition: font-size 0.3s ease;
+  transform: translateY(-1px); /* Небольшая корректировка для визуального центрирования */
+}
+
+.modalButton:hover span {
+  font-size: 40px;
+}
 
 .closeButton {
-  top: -50px;
-  right: -50px;
+  top: -75px;
+  right: -75px;
+  width: 35px;
+  height: 35px;
+  color: var(--color-accent-dark);
 }
 
 .prevButton {
-  left: -60px;
+  left: -75px;
   top: 50%;
   transform: translateY(-50%);
+  height: 135px;
+  width: 35px;
 }
 
 .nextButton {
-  right: -60px;
+  right: -75px;
   top: 50%;
   transform: translateY(-50%);
+  height: 135px;
+  width: 35px;
 }
 
 @media (max-width: 768px) {

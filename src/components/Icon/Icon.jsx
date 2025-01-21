@@ -1,4 +1,3 @@
-import React from 'react';
 import sprite from '../../assets/icons/icons.svg';
 
 const Icon = ({ name, className }) => {

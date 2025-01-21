@@ -415,7 +415,7 @@ const Catalog = () => {
         <div className={styles.filtersActions}>
           <button 
             className={styles.resetButton}
-            onClick={() => dispatch(resetFilters())}
+            onClick={handleResetFilters}
           >
             Reset All Filters
           </button>

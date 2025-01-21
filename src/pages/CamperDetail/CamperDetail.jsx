@@ -25,13 +25,15 @@ const CamperDetail = () => {
 
   const updateTabIndicator = () => {
     const activeElement = document.querySelector(`.${styles.activeTab}`);
-    if (activeElement) {
-      const tabsContainer = document.querySelector(`.${styles.tabs}`);
+    const tabsContainer = document.querySelector(`.${styles.tabs}`);
+    if (activeElement && tabsContainer) {
       const left = activeElement.offsetLeft;
       const width = activeElement.offsetWidth;
       
-      tabsContainer.style.setProperty('--tab-width', `${width}px`);
-      tabsContainer.style.setProperty('--tab-left', `${left}px`);
+      requestAnimationFrame(() => {
+        tabsContainer.style.setProperty('--tab-width', `${width}px`);
+        tabsContainer.style.setProperty('--tab-left', `${left}px`);
+      });
     }
   };
 
@@ -39,12 +41,17 @@ const CamperDetail = () => {
     updateTabIndicator();
   }, [activeTab]);
 
-  // Инициализация подчеркивания при монтировании
   useEffect(() => {
-    // Небольшая задержка, чтобы DOM успел обновиться
-    const timer = setTimeout(updateTabIndicator, 0);
-    return () => clearTimeout(timer);
-  }, []);
+    if (camper) {
+      const timer = setTimeout(updateTabIndicator, 100);
+      window.addEventListener('resize', updateTabIndicator);
+      
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener('resize', updateTabIndicator);
+      };
+    }
+  }, [camper]);
 
   if (isLoading) {
     return <div className={styles.loading}>Loading...</div>;

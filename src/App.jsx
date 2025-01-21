@@ -3,6 +3,7 @@ import Header from './components/Header/Header';
 import Home from './pages/Home/Home';
 import Catalog from './pages/Catalog/Catalog';
 import CamperDetail from './pages/CamperDetail/CamperDetail';
+import Favorits from './pages/Favorits/Favorits';
 import './App.css';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/catalog/:id" element={<CamperDetail />} />
+          <Route path="/favorits" element={<Favorits />} />
         </Routes>
       </main>
     </div>

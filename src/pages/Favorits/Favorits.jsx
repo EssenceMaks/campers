@@ -28,7 +28,7 @@ import {
   selectIsAutoSearch
 } from '../../redux/slices/filtersSlice';
 import { toggleFavorite, toggleShowFavorites, selectFavorites, selectShowFavorites } from '../../redux/slices/favoritesSlice';
-import styles from './Catalog.module.css';
+import styles from './Favorits.module.css';
 
 const EQUIPMENT_OPTIONS = [
   { key: 'AC', label: 'Air Conditioning' },
@@ -415,7 +415,7 @@ const Catalog = () => {
         <div className={styles.filtersActions}>
           <button 
             className={styles.resetButton}
-            onClick={() => dispatch(resetFilters())}
+            onClick={handleResetFilters}
           >
             Reset All Filters
           </button>
