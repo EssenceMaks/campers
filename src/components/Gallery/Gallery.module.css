@@ -1,0 +1,147 @@
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(292px, 300px));
+  gap: 20px;
+  width: 100%;
+}
+
+.imageWrapper {
+  position: relative;
+  padding: 2px;
+  transition: box-shadow 0.7s ease-in-out;
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  min-width: 292px;
+  min-height: 312px;
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+  background-color: #f0f0f0;
+}
+
+.imageWrapper:hover .imageContainer {
+  box-shadow: 0 0 0 2px var(--color-accent-dark);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modalContent {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalImage {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.modalButton {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 2px solid transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: #333;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.modalButton:hover {
+  border-color: var(--color-accent);
+}
+
+.modalButton span {
+  font-size: 38px;
+  line-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  transition: font-size 0.3s ease;
+  transform: translateY(-1px); /* Небольшая корректировка для визуального центрирования */
+}
+
+.modalButton:hover span {
+  font-size: 40px;
+}
+
+.closeButton {
+  top: -75px;
+  right: -75px;
+  width: 35px;
+  height: 35px;
+  color: var(--color-accent-dark);
+}
+
+.prevButton {
+  left: -75px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 135px;
+  width: 35px;
+}
+
+.nextButton {
+  right: -75px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 135px;
+  width: 35px;
+}
+
+@media (max-width: 768px) {
+  .gallery {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  .modalButton {
+    width: 35px;
+    height: 35px;
+    font-size: 20px;
+  }
+
+  .closeButton {
+    top: -40px;
+    right: 0;
+  }
+
+  .prevButton {
+    left: 10px;
+  }
+
+  .nextButton {
+    right: 10px;
+  }
+}

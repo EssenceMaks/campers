@@ -40,7 +40,8 @@ const initialState = {
     limit: 9,
     total: 0
   },
-  hasMore: true
+  hasMore: true,
+  selectedCamper: null
 };
 
 export const searchCampers = createAsyncThunk(
@@ -115,6 +116,35 @@ export const searchCampers = createAsyncThunk(
   }
 );
 
+export const fetchCamperById = createAsyncThunk(
+  "campers/fetchCamperById",
+  async (id) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/campers/${id}`);
+      const camper = response.data;
+      return {
+        ...camper,
+        features: {
+          transmission: camper.transmission,
+          engine: camper.engine,
+          AC: camper.AC,
+          bathroom: camper.bathroom,
+          kitchen: camper.kitchen,
+          TV: camper.TV,
+          radio: camper.radio,
+          refrigerator: camper.refrigerator,
+          microwave: camper.microwave,
+          gas: camper.gas,
+          water: camper.water
+        }
+      };
+    } catch (error) {
+      console.error("API Error:", error);
+      throw error;
+    }
+  }
+);
+
 const campersSlice = createSlice({
   name: "campers",
   initialState,
@@ -151,6 +181,18 @@ const campersSlice = createSlice({
       .addCase(searchCampers.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
+      })
+      .addCase(fetchCamperById.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchCamperById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.selectedCamper = action.payload;
+      })
+      .addCase(fetchCamperById.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
       });
   },
 });
@@ -158,6 +200,9 @@ const campersSlice = createSlice({
 export const selectCampers = (state) => state.campers.items;
 export const selectPagination = (state) => state.campers.pagination;
 export const selectHasMore = (state) => state.campers.hasMore;
+export const selectSelectedCamper = (state) => state.campers.selectedCamper;
+export const selectCampersLoading = (state) => state.campers.isLoading;
+export const selectCampersError = (state) => state.campers.error;
 
 export const { setPage, resetPagination, resetCampers } = campersSlice.actions;
 
