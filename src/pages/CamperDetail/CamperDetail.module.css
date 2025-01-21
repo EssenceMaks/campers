@@ -70,8 +70,9 @@
   .pictures img {
     display: inline-block;
     width: 100%;
+    min-width: 292px;
     height: 100%;
-    object-fit: none;
+    min-height: 312px;
     border-radius: 8px;
     transition: transform 0.2s;
     cursor: pointer;
@@ -237,6 +238,10 @@
   fill: var(--color-accent-dark);
 }
 
+.iconFilled {
+  fill: red;
+}
+
 .location {
   display: flex;
   align-items: center;
@@ -323,51 +328,79 @@
 
 /* Отзывы */
 .reviews {
-  display: grid;
-  gap: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
 }
 
 .review {
-  background-color: #f8f8f8;
-  padding: 15px;
-  border-radius: 8px;
+
 }
 
 .reviewHeader {
   display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 8px;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .reviewAuthor {
-  font-weight: 500;
-  color: var(--color-primary-dark);
-  background-color: var(--color-neutral-lighter);
-  padding: 4px 12px;
-  border-radius: 16px;
+  width: 40px;
+  height: 40px;
+  background: var(--color-neutral-lighter);
+  color: var(--color-accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
 }
 
-.reviewText {
-  margin: 0;
+.reviewInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.reviewName {
+  font-weight: 500;
   color: var(--color-primary-dark);
+  font-size: 16px;
+  text-align: left;
 }
 
 .stars {
-  color: var(--color-accent-dark);
-  letter-spacing: 2px;
+  display: flex;
+  gap: 2px;
+  font-size: 15px;
+  color: #ddd;
+}
+
+.stars span {
+  color: #ddd;
+  cursor: default;
+}
+
+.starFilled {
+  color: #FFD700 !important;
+}
+
+.reviewDate {
+  color: var(--color-primary);
+  font-size: 14px;
+}
+
+.reviewText {
+  margin-top: 12px;
+  color: var(--color-primary);
+  line-height: 1.6;
+  font-size: 15px;
+  text-align: left;
 }
 
 .noReviews {
   text-align: center;
-  color: var(--color-primary-dark);
-  padding: 20px;
-  background-color: var(--color-neutral-lighter);
-  border-radius: 8px;
-}
-
-.reviewRating {
-  color: #ffd700;
+  color: var(--color-text-light);
+  padding: 40px;
 }
 
 /* Состояния загрузки и ошибок */

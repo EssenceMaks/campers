@@ -66,7 +66,7 @@ const CamperDetail = () => {
         <div className={styles.locationContainer}>
           <div className={styles.reviewsrating}>
             <span>★</span>
-            <span>{camper.rating} ({camper.reviews?.length || 0} Reviews)</span>
+            <span style={{ borderBottom: 'solid 1px black' }}>{camper.rating} ({camper.reviews?.length || 0} Reviews)</span>
           </div>
           <div className={styles.location}>
             <Icon name="icon-map" className={styles.locationIcon} />
@@ -101,7 +101,7 @@ const CamperDetail = () => {
               {!favoriteIds.includes(camper.id) && <span className={styles.favoriteText}>Add to favorites</span>}
               <Icon 
                 name="icon-heart" 
-                className={`${styles.icon} ${favoriteIds.includes(camper.id) ? styles.iconActive : ''}`} 
+                className={`${styles.icon} ${favoriteIds.includes(camper.id) ? styles.iconFilled : ''}`} 
               />
             </div>
           </div>
@@ -135,22 +135,31 @@ const CamperDetail = () => {
             )}
             {activeTab === 'reviews' && (
               <div className={styles.reviews}>
-                {(camper.reviews || []).map((review, index) => (
-                  <div key={index} className={styles.review}>
-                    <div className={styles.reviewHeader}>
-                      <span className={styles.reviewAuthor}>
-                        {String.fromCharCode(65 + index)} {/* A, B, C, ... */}
-                      </span>
-                      <div className={styles.stars}>
-                        {'★'.repeat(review.rating)}
-                        {'☆'.repeat(5 - review.rating)}
+                {camper.reviews && camper.reviews.length > 0 ? (
+                  camper.reviews.map((review, index) => (
+                    <div key={index} className={styles.review}>
+                      <div className={styles.reviewHeader}>
+                        <div className={styles.reviewAuthor}>
+                          {review.reviewer_name?.[0]}
+                        </div>
+                        <div className={styles.reviewInfo}>
+                          <div className={styles.reviewName}>{review.reviewer_name}</div>
+                          <div className={styles.stars}>
+                            {[...Array(5)].map((_, i) => (
+                              <span key={i} className={i < review.reviewer_rating ? styles.starFilled : ''}>
+                                ★
+                              </span>
+                            ))}
+                          </div>
+                        </div>
                       </div>
+                      <p className={styles.reviewText}>{review.comment}</p>
                     </div>
-                    <p className={styles.reviewText}>{review.text}</p>
+                  ))
+                ) : (
+                  <div className={styles.noReviews}>
+                    <p>No reviews yet</p>
                   </div>
-                ))}
-                {(!camper.reviews || camper.reviews.length === 0) && (
-                  <p className={styles.noReviews}>No reviews yet</p>
                 )}
               </div>
             )}
