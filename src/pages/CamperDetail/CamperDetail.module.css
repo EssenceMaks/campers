@@ -3,6 +3,7 @@
   display: block;
   padding: 64px;
   max-width: 1440px;
+  min-height: 1500px; /* тимчасове рішення щоб сторінка не пригла від перемикання ревью та тех.інфо */
   margin: 0 auto;
   background-color: var(--color-white);
   
@@ -356,9 +357,6 @@
   gap: 44px;
 }
 
-.review {
-
-}
 
 .reviewHeader {
   display: flex;
