@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import Icon from '../../components/Icon/Icon';
 import { 
   searchCampers,
@@ -31,7 +32,7 @@ import { toggleFavorite, toggleShowFavorites, selectFavorites, selectShowFavorit
 import styles from './Catalog.module.css';
 
 const EQUIPMENT_OPTIONS = [
-  { key: 'AC', label: 'Air Conditioning', icon: 'icon-wind' },
+  { key: 'AC', label: 'Air Condit..', icon: 'icon-wind' },
   { key: 'bathroom', label: 'Bathroom', icon: 'icon-shower' },
   { key: 'kitchen', label: 'Kitchen', icon: 'icon-cup-hot' },
   { key: 'TV', label: 'TV', icon: 'icon-tv' },
@@ -43,22 +44,167 @@ const EQUIPMENT_OPTIONS = [
 ];
 
 const ENGINE_OPTIONS = [
-  { value: 'petrol', label: 'Petrol', icon: 'icon-fuel' },
-  { value: 'diesel', label: 'Diesel', icon: 'icon-fuel' },
-  { value: 'hybrid', label: 'Hybrid', icon: 'icon-fuel' },
-  { value: 'gas', label: 'Gas', icon: 'icon-fuel' }
+  { key: 'petrol', label: 'Petrol', icon: 'icon-fuel' },
+  { key: 'diesel', label: 'Diesel', icon: 'icon-fuel' },
+  { key: 'hybrid', label: 'Hybrid', icon: 'icon-fuel' },
+  { key: 'gas', label: 'Gas', icon: 'icon-fuel' }
 ];
 
 const TRANSMISSION_OPTIONS = [
-  { value: 'automatic', label: 'Automatic', icon: 'icon-diagram' },
-  { value: 'manual', label: 'Manual', icon: 'icon-diagram' }
+  { key: 'automatic', label: 'Automatic', icon: 'icon-diagram' },
+  { key: 'manual', label: 'Manual', icon: 'icon-diagram' }
 ];
 
 const VEHICLE_TYPE_OPTIONS = [
-  { value: 'alcove', label: 'Alcove', icon: 'icon-bi_grid' },
-  { value: 'fullyIntegrated', label: 'Fully Integrated', icon: 'icon-bi_grid-3x3' },
-  { value: 'panelTruck', label: 'Panel Truck', icon: 'icon-bi_grid-1x2' }
+  { key: 'alcove', label: 'Alcove', icon: 'icon-bi_grid' },
+  { key: 'fullyIntegrated', label: 'Fully Integrated', icon: 'icon-bi_grid-3x3' },
+  { key: 'panelTruck', label: 'Van', icon: 'icon-bi_grid-1x2' }
 ];
+
+const truncateTitle = (title, maxLength = 23) => {
+  if (title.length <= maxLength) return title;
+  return `${title.slice(0, maxLength)}...`;
+};
+
+const CamperCard = ({ camper, onFavoriteClick, isFavorite }) => {
+  // Добавляем console.log для проверки структуры данных
+  
+
+  return (
+    <div className={styles.camperCard}>
+      <img
+        src={camper.mainImage || camper.gallery?.[0]} 
+        alt={camper.name}
+        className={styles.camperImage}
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = 'https://via.placeholder.com/300x200?text=No+Image';
+        }}
+      />
+      <h3 title={camper.name} className={styles.camperTitle}>{truncateTitle(camper.name)}</h3>
+      <div className={styles.priceContainer}>
+        <p className={styles.camperPrice}>€{camper.price.toLocaleString('de-DE')},00</p>
+        <div className={styles.favoriteIcon} onClick={() => onFavoriteClick(camper.id)}>
+          <Icon 
+            name="icon-heart" 
+            className={`${styles.icon} ${isFavorite ? styles.iconFilled : ''}`} 
+          />
+        </div>
+      </div>
+      
+      <div className={styles.reviewsLocation}>
+        <div className={styles.reviews}>
+          <Icon name="icon-star" />
+          {camper.rating} ({camper.reviews} Reviews)
+        </div>
+        <div className={styles.location}>
+          <Icon name="icon-map" />
+          {camper.location}
+        </div>
+      </div>
+
+      <p className={styles.description}>
+        {camper.description?.length > 100
+          ? `${camper.description.substring(0, 100)}...`
+          : camper.description}
+      </p>
+
+      <div className={styles.features}>
+        {/* Vehicle Equipment */}
+        {camper.features?.AC && (
+          <span className={styles.feature}>
+            <Icon name="icon-wind" />
+            Air Condit..
+          </span>
+        )}
+        {camper.features?.bathroom && (
+          <span className={styles.feature}>
+            <Icon name="icon-shower" />
+            Bathroom
+          </span>
+        )}
+        {camper.features?.kitchen && (
+          <span className={styles.feature}>
+            <Icon name="icon-cup-hot" />
+            Kitchen
+          </span>
+        )}
+        {camper.features?.TV && (
+          <span className={styles.feature}>
+            <Icon name="icon-tv" />
+            TV
+          </span>
+        )}
+        {camper.features?.radio && (
+          <span className={styles.feature}>
+            <Icon name="icon-radio" />
+            Radio
+          </span>
+        )}
+        {camper.features?.refrigerator && (
+          <span className={styles.feature}>
+            <Icon name="icon-fridge" />
+            Refrigerator
+          </span>
+        )}
+        {camper.features?.microwave && (
+          <span className={styles.feature}>
+            <Icon name="icon-microwave" />
+            Microwave
+          </span>
+        )}
+        {camper.features?.gas && (
+          <span className={styles.feature}>
+            <Icon name="icon-gas" />
+            Gas
+          </span>
+        )}
+        {camper.features?.water && (
+          <span className={styles.feature}>
+            <Icon name="icon-water" />
+            Water
+          </span>
+        )}
+
+        {/* Vehicle Type */}
+        {camper.form && (
+          <span className={styles.feature}>
+            <Icon name={
+              camper.form === 'alcove' ? 'icon-bi_grid' :
+              camper.form === 'fullyIntegrated' ? 'icon-bi_grid-3x3' :
+              'icon-bi_grid-1x2'
+            } />
+            {camper.form === 'fullyIntegrated' ? 'Integrated' :
+             camper.form === 'panelTruck' ? 'Van' :
+             'Alcove'}
+          </span>
+        )}
+
+        {/* Engine Type */}
+        {camper.features?.engine && (
+          <span className={styles.feature}>
+            <Icon name="icon-fuel" />
+            {camper.features.engine}
+          </span>
+        )}
+
+        {/* Transmission */}
+        {camper.features?.transmission && (
+          <span className={styles.feature}>
+            <Icon name="icon-diagram" />
+            {camper.features.transmission}
+          </span>
+        )}
+      </div>
+
+      <div className={styles.button}>
+        <Link to={`/catalog/${camper.id}`} className={styles.showMoreButton}>
+          Show more
+        </Link>
+      </div>
+    </div>
+  );
+};
 
 const Catalog = () => {
   const dispatch = useDispatch();
@@ -181,24 +327,39 @@ const Catalog = () => {
     }
   };
 
-  const handleEngineChange = (value) => {
-    dispatch(setEngineFilter(value));
+  const handleEngineChange = (key) => {
+    // Toggle the selected engine type
+    const newEngines = filters.engines.includes(key)
+      ? filters.engines.filter(engine => engine !== key)
+      : [...filters.engines, key];
+    
+    dispatch(setEngineFilter(newEngines));
     if (isAutoSearch) {
       dispatch(resetPagination());
       dispatch(searchCampers({ page: 1 }));
     }
   };
 
-  const handleTransmissionChange = (value) => {
-    dispatch(setTransmissionFilter(value));
+  const handleTransmissionChange = (key) => {
+    // Toggle the selected transmission type
+    const newTransmissions = filters.transmissions.includes(key)
+      ? filters.transmissions.filter(transmission => transmission !== key)
+      : [...filters.transmissions, key];
+    
+    dispatch(setTransmissionFilter(newTransmissions));
     if (isAutoSearch) {
       dispatch(resetPagination());
       dispatch(searchCampers({ page: 1 }));
     }
   };
 
-  const handleFormChange = (value) => {
-    dispatch(setFormFilter(value));
+  const handleFormChange = (key) => {
+    // Toggle the selected form type
+    const newForms = filters.forms.includes(key)
+      ? filters.forms.filter(form => form !== key)
+      : [...filters.forms, key];
+    
+    dispatch(setFormFilter(newForms));
     if (isAutoSearch) {
       dispatch(resetPagination());
       dispatch(searchCampers({ page: 1 }));
@@ -237,30 +398,8 @@ const Catalog = () => {
       return campers.filter(camper => favoriteIds.includes(camper.id));
     }
 
-    // Otherwise apply normal filters
-    return campers.filter(camper => {
-      // Location filter
-      const matchesLocation = !filters?.location || 
-        camper.location.toLowerCase().includes(filters.location.toLowerCase());
-
-      // Form filter
-      const matchesForm = !filters?.form || filters.form === camper.form;
-
-      // Transmission filter
-      const matchesTransmission = !filters?.transmission || 
-        filters.transmission === camper.transmission;
-
-      // Engine filter
-      const matchesEngine = !filters?.engine || filters.engine === camper.engine;
-
-      // Features filter
-      const matchesFeatures = !filters?.features?.length || 
-        filters.features.every(feature => camper.features[feature]);
-
-      return matchesLocation && matchesForm && matchesTransmission && 
-             matchesEngine && matchesFeatures;
-    });
-  }, [campers, filters, showFavorites, favoriteIds]);
+    return campers;
+  }, [campers, showFavorites, favoriteIds]);
 
   if (error) {
     return <div className={styles.error}>Error: {error}</div>;
@@ -269,12 +408,12 @@ const Catalog = () => {
   return (
     <div className={styles.catalogContainer}>
       <div className={styles.filtersColumn}>
-        <h2 className={styles.filtersTitle}>Filters</h2>
         
         {/* Location Filter */}
         <div className={styles.filterSection}>
-          <h3>Location</h3>
+        <h4>Location</h4>
           <div className={styles.locationInputContainer} ref={locationInputRef}>
+            <Icon name="icon-map" className={styles.locationIcon} />
             <input
               type="text"
               value={locationInput}
@@ -321,118 +460,127 @@ const Catalog = () => {
               </div>
             )}
             {isLoadingLocations && (
-              <div className={styles.loadingLocations}>Loading...</div>
+              <div className={styles.loadingLocations} style={{ left: '50%' }}>Loading...</div>
             )}
           </div>
         </div>
-
+        <h4 className={styles.filtersTitle}>Filters</h4>
         {/* Equipment Filter */}
         <div className={styles.filterSection}>
           <h3>Vehicle Equipment</h3>
-          {EQUIPMENT_OPTIONS.map(({ key, label, icon }) => (
-            <label key={key} className={styles.filterLabel}>
-              <input
-                type="checkbox"
-                checked={filters.equipment[key]}
-                onChange={() => handleEquipmentChange(key)}
-              />
-              <Icon name={icon} />
-              {label}
-            </label>
-          ))}
+          <div className={styles.filterGrid}>
+            {EQUIPMENT_OPTIONS.map(({ key, label, icon }) => (
+              <label key={key} className={`${styles.filterLabel} ${filters.equipment[key] ? styles.selected : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={filters.equipment[key]}
+                  onChange={() => handleEquipmentChange(key)}
+                  className={styles.hiddenCheckbox}
+                />
+                <Icon name={icon} />
+                <span>{label}</span>
+              </label>
+            ))}
+          </div>
         </div>
 
         {/* Engine Filter */}
         <div className={styles.filterSection}>
           <h3>Engine Type</h3>
-          {ENGINE_OPTIONS.map(({ value, label, icon }) => (
-            <label key={value} className={styles.filterLabel}>
-              <input
-                type="checkbox"
-                checked={filters.engines.includes(value)}
-                onChange={() => handleEngineChange(value)}
-              />
-              <Icon name={icon} />
-              {label}
-            </label>
-          ))}
+          <div className={styles.filterGrid}>
+            {ENGINE_OPTIONS.map(({ key, label, icon }) => (
+              <label key={key} className={`${styles.filterLabel} ${filters.engines.includes(key) ? styles.selected : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={filters.engines.includes(key)}
+                  onChange={() => handleEngineChange(key)}
+                  className={styles.hiddenCheckbox}
+                />
+                <Icon name={icon} />
+                <span>{label}</span>
+              </label>
+            ))}
+          </div>
         </div>
 
         {/* Transmission Filter */}
         <div className={styles.filterSection}>
           <h3>Transmission</h3>
-          {TRANSMISSION_OPTIONS.map(({ value, label, icon }) => (
-            <label key={value} className={styles.filterLabel}>
-              <input
-                type="checkbox"
-                checked={filters.transmissions.includes(value)}
-                onChange={() => handleTransmissionChange(value)}
-              />
-              <Icon name={icon} />
-              {label}
-            </label>
-          ))}
+          <div className={styles.filterGrid}>
+            {TRANSMISSION_OPTIONS.map(({ key, label, icon }) => (
+              <label key={key} className={`${styles.filterLabel} ${filters.transmissions.includes(key) ? styles.selected : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={filters.transmissions.includes(key)}
+                  onChange={() => handleTransmissionChange(key)}
+                  className={styles.hiddenCheckbox}
+                />
+                <Icon name={icon} />
+                <span>{label}</span>
+              </label>
+            ))}
+          </div>
         </div>
 
         {/* Vehicle Type Filter */}
         <div className={styles.filterSection}>
           <h3>Vehicle Type</h3>
-          {VEHICLE_TYPE_OPTIONS.map(({ value, label, icon }) => (
-            <label key={value} className={styles.filterLabel}>
-              <input
-                type="checkbox"
-                checked={filters.forms.includes(value)}
-                onChange={() => handleFormChange(value)}
-              />
-              <Icon name={icon} />
-              {label}
-            </label>
-          ))}
+          <div className={styles.filterGrid}>
+            {VEHICLE_TYPE_OPTIONS.map(({ key, label, icon }) => (
+              <label key={key} className={`${styles.filterLabel} ${filters.forms.includes(key) ? styles.selected : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={filters.forms.includes(key)}
+                  onChange={() => handleFormChange(key)}
+                  className={styles.hiddenCheckbox}
+                />
+                <Icon name={icon} />
+                <span>{label}</span>
+              </label>
+            ))}
+          </div>
         </div>
 
         {/* Search Mode Toggle */}
-        <div className={styles.searchModeContainer}>
-          <button 
-            className={`${styles.searchModeButton} ${isAutoSearch ? styles.active : ''}`}
-            onClick={handleSearchModeToggle}
-          >
-            Auto-Search
-          </button>
-          <span className={styles.searchModeDivider}>|</span>
-          <button 
-            className={`${styles.searchModeButton} ${!isAutoSearch ? styles.active : ''}`}
-            onClick={handleSearchModeToggle}
-          >
-            Search
-          </button>
-        </div>
+        <div className={styles.searchModeToggle}>
+          <h4>Search Settings</h4>
+          <div className={styles.searchModeContainer}>
+            <button 
+              className={`${styles.searchModeButton} ${isAutoSearch ? styles.active : ''}`}
+              onClick={handleSearchModeToggle}
+            >
+              Auto-Search
+            </button>
+            <span className={styles.searchModeDivider}>|</span>
+            <button 
+              className={`${styles.searchModeButton} ${!isAutoSearch ? styles.active : ''}`}
+              onClick={handleSearchModeToggle}
+            >
+              Search
+            </button>
+          </div>
 
-        {!isAutoSearch && (
           <button 
-            className={styles.searchButton}
+            className={`${styles.searchButton} ${!isAutoSearch ? styles.active : ''}`}
             onClick={handleManualSearch}
           >
             Search Campers
           </button>
-        )}
 
-        <div className={styles.filtersActions}>
-          <button 
-            className={styles.resetButton}
-            onClick={handleResetFilters}
-          >
-            Reset All Filters
-          </button>
-          {favoriteIds.length > 0 && (
-            <button
-              className={`${styles.resetButton} ${showFavorites ? styles.activeFilter : ''}`}
-              onClick={() => {
-                dispatch(toggleShowFavorites());
-              }}
+          <div className={styles.filtersActions}>
+            <button 
+              className={styles.resetButton}
+              onClick={handleResetFilters}
             >
-              Show Favorites ({favoriteIds.length})
+              Reset All Filters
             </button>
-          )}
+            <button
+              className={styles.resetButton}
+              onClick={() => dispatch(toggleShowFavorites())}
+            >
+              Show Favorites ({favoriteIds.length || 0}) <Icon name="icon-heart" className={favoriteIds.length > 0 ? styles.activeHeart : styles.emptyHeart} />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -450,64 +598,12 @@ const Catalog = () => {
         )}
         <div className={styles.campersGrid}>
           {filteredCampers.map((camper) => (
-            <div key={camper.id} className={styles.camperCard}>
-              <div className={styles.cardImageContainer}>
-                <img 
-                  src={camper.mainImage} 
-                  alt={camper.name} 
-                  className={styles.camperImage}
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = 'https://via.placeholder.com/300x200?text=No+Image';
-                  }}
-                />
-              </div>
-              <div className={styles.camperInfo}>
-                <div className={styles.camperHeader}>
-                  <h3>{camper.name}</h3>
-                  <div className={styles.priceHeart}>
-                    <span className={styles.price}>€{camper.price.toFixed(2)}</span>
-                    <button 
-                      className={`${styles.heartButton} ${favoriteIds.includes(camper.id) ? styles.heartActive : ''}`}
-                      onClick={() => dispatch(toggleFavorite(camper.id))}
-                    >
-                      {favoriteIds.includes(camper.id) ? '♥' : '♡'}
-                    </button>
-                  </div>
-                </div>
-                <div className={styles.location}>
-                  <span className={styles.rating}>★ {camper.rating}</span>
-                  <span className={styles.reviewsCount}>({camper.reviews} {camper.reviews === 1 ? 'Review' : 'Reviews'})</span>
-                  <span className={styles.locationText}>{camper.location}</span>
-                </div>
-                <p className={styles.description}>{camper.description}</p>
-                <div className={styles.features}>
-                  {camper.features.transmission && (
-                    <span className={styles.feature}>
-                      {camper.features.transmission}
-                    </span>
-                  )}
-                  {camper.features.engine && (
-                    <span className={styles.feature}>
-                      {camper.features.engine}
-                    </span>
-                  )}
-                  {camper.form && (
-                    <span className={styles.feature}>
-                      {camper.form}
-                    </span>
-                  )}
-                </div>
-                <a 
-                  href={`/catalog/${camper.id}`}
-                  className={styles.showMore}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Show more
-                </a>
-              </div>
-            </div>
+            <CamperCard 
+              key={camper.id} 
+              camper={camper} 
+              onFavoriteClick={() => dispatch(toggleFavorite(camper.id))}
+              isFavorite={favoriteIds.includes(camper.id)}
+            />
           ))}
         </div>
         
@@ -515,7 +611,7 @@ const Catalog = () => {
         
         {!isLoading && !showFavorites && hasMore && (
           <button 
-            className={styles.loadMore}
+            className={styles.loadMoreButton}
             onClick={handleLoadMore}
           >
             Load More

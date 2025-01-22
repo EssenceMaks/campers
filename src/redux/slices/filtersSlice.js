@@ -31,28 +31,13 @@ const filtersSlice = createSlice({
       state.equipment[name] = value;
     },
     setEngineFilter: (state, action) => {
-      const value = action.payload;
-      if (state.engines.includes(value)) {
-        state.engines = state.engines.filter(engine => engine !== value);
-      } else {
-        state.engines.push(value);
-      }
+      state.engines = action.payload;
     },
     setTransmissionFilter: (state, action) => {
-      const value = action.payload;
-      if (state.transmissions.includes(value)) {
-        state.transmissions = state.transmissions.filter(trans => trans !== value);
-      } else {
-        state.transmissions.push(value);
-      }
+      state.transmissions = action.payload;
     },
     setFormFilter: (state, action) => {
-      const value = action.payload;
-      if (state.forms.includes(value)) {
-        state.forms = state.forms.filter(form => form !== value);
-      } else {
-        state.forms.push(value);
-      }
+      state.forms = action.payload;
     },
     toggleAutoSearch: (state) => {
       state.isAutoSearch = !state.isAutoSearch;
