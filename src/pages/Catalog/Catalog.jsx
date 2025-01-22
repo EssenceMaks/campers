@@ -198,7 +198,12 @@ const CamperCard = ({ camper, onFavoriteClick, isFavorite }) => {
       </div>
 
       <div className={styles.button}>
-        <Link to={`/catalog/${camper.id}`} className={styles.showMoreButton}>
+        <Link 
+          to={`/catalog/${camper.id}`} 
+          className={styles.showMoreButton}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Show more
         </Link>
       </div>
