@@ -411,51 +411,99 @@
   font-size: 1.2rem;
 }
 
+.searchModeToggle {
+  margin-top: 38px;
+  text-align: left;
+  border-top: 2px dashed var(--color-neutral-light);
+}
+
 .searchModeContainer {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 16px;
-  padding: 8px;
-  background: #2a2a2a;
+  margin-bottom: 20px;
   border-radius: 4px;
+  overflow: hidden;
 }
 
 .searchModeButton {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid var(--color-neutral-light);
   background: none;
-  border: none;
-  padding: 8px 16px;
-  color: #666;
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
+  color: var(--color-primary);
+  font-size: 14px;
 }
 
 .searchModeButton.active {
-  color: #249715;
+  color: var(--color-accent);
+  background-color: var(--color-neutral-lightest);
+}
+
+.searchModeButton:first-child {
+  border-radius: 4px 0 0 4px;
+  border-right: none;
+}
+
+.searchModeButton:last-child {
+  border-radius: 0 4px 4px 0;
+  border-left: none;
 }
 
 .searchModeDivider {
-  color: #333;
-  margin: 0 8px;
+  display: none;
 }
 
 .searchButton {
   width: 100%;
-  padding: 12px;
-  background: #249715;
-  color: white;
-  border: none;
-  border-radius: 6px;
+  padding: 8px;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 4px;
+  background: none;
   cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
+  color: var(--color-primary);
+  opacity: 0.5;
   transition: all 0.2s ease;
-  margin-bottom: 16px;
 }
 
-.searchButton:hover {
-  background: #1b7110;
+.searchButton.active {
+  opacity: 1;
+  background-color: var(--color-neutral-lightest);
+}
+
+.resetButton {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+  color: var(--color-primary);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.resetButton:hover {
+  background-color: var(--color-accent);
+}
+
+.emptyHeart {
+  color: var(--color-neutral);
+  width: 16px;
+  height: 16px;
+  vertical-align: -2px;
+  margin-left: 4px;
+}
+
+.activeHeart {
+  color: var(--color-accent);
+  width: 16px;
+  height: 16px;
+  vertical-align: -2px;
+  margin-left: 4px;
 }
 
 .favoritesHeader {

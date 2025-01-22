@@ -399,7 +399,6 @@ const Catalog = () => {
         <div className={styles.searchModeToggle}>
           <h4>Search Settings</h4>
           <div className={styles.searchModeContainer}>
-          
             <button 
               className={`${styles.searchModeButton} ${isAutoSearch ? styles.active : ''}`}
               onClick={handleSearchModeToggle}
@@ -415,14 +414,12 @@ const Catalog = () => {
             </button>
           </div>
 
-          {!isAutoSearch && (
-            <button 
-              className={styles.searchButton}
-              onClick={handleManualSearch}
-            >
-              Search Campers
-            </button>
-          )}
+          <button 
+            className={`${styles.searchButton} ${!isAutoSearch ? styles.active : ''}`}
+            onClick={handleManualSearch}
+          >
+            Search Campers
+          </button>
 
           <div className={styles.filtersActions}>
             <button 
@@ -431,16 +428,12 @@ const Catalog = () => {
             >
               Reset All Filters
             </button>
-            {favoriteIds.length > 0 && (
-              <button
-                className={`${styles.resetButton} ${showFavorites ? styles.activeFilter : ''}`}
-                onClick={() => {
-                  dispatch(toggleShowFavorites());
-                }}
-              >
-                Show Favorites ({favoriteIds.length})
-              </button>
-            )}
+            <button
+              className={styles.resetButton}
+              onClick={() => dispatch(toggleShowFavorites())}
+            >
+              Show Favorites ({favoriteIds.length || 0}) <Icon name="icon-heart" className={favoriteIds.length > 0 ? styles.activeHeart : styles.emptyHeart} />
+            </button>
           </div>
         </div>
       </div>
