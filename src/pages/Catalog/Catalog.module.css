@@ -1,63 +1,66 @@
 .catalogContainer {
   display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 2rem;
-  padding: 2rem;
+  grid-template-columns: 360px 1fr;
+  gap: 64px;
+  padding: 48px 64px;
   max-width: 1440px;
   margin: 0 auto;
   min-height: calc(100vh - 80px);
+  background-color: var(--color-white);
 }
 
 .filtersColumn {
-  background: #1a1a1a;
-  padding: 24px;
-  border-radius: 12px;
   height: fit-content;
-  color: #fff;
-}
-
-.filtersTitle {
-  color: #249715;
-  margin-bottom: 24px;
-  font-size: 1.5rem;
+  color: var(--color-primary);
+  width: 100%;
 }
 
 .filterSection {
-  margin-bottom: 24px;
+  text-align: left;
+}
+
+.filterSection h4 {
+  margin-bottom: 16px;
+  font-size: 1.1rem;
+  color: #6C717B;
+}
+.filtersTitle {
+  text-align: left;
+  font-size: 1.1rem;
+  color: #6C717B;
 }
 
 .filterSection h3 {
   margin-bottom: 16px;
   font-size: 1.1rem;
-  color: #fff;
+  color: var(--color-primary-dark);
+  padding: 20px 0px;
+  border-bottom: 2px solid var(--color-neutral-light);
 }
 
-.locationInputContainer {
+.locationInputContainer { 
   position: relative;
-  width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: 10px;
 }
 
 .locationInput {
-  width: 100%;
-  padding: 8px 30px 8px 10px;
+  width: calc(100% - 36px);
+  padding: 8px 0px 8px 36px;
+  background-color: var(--color-neutral-lightest);
+  color: var(--color-primary);
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 14px;
-  transition: border-color 0.2s ease;
 }
 
-.invalidInput {
-  border-color: #ff4d4f;
-}
-
-.errorMessage {
-  color: #ff4d4f;
-  font-size: 12px;
-  margin-top: 4px;
+.locationIcon {
   position: absolute;
-  left: 0;
-  bottom: -20px;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-primary);
+  width: 16px;
+  height: 16px;
 }
 
 .locationDropdownButton,
@@ -87,7 +90,7 @@
 
 .locationDropdownButton:hover,
 .locationClearButton:hover {
-  color: #249715;
+  color: var(--color-accent);
 }
 
 .suggestionsList {
@@ -124,38 +127,64 @@
   font-size: 0.9rem;
 }
 
-.filterLabel {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-  cursor: pointer;
+.filterGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
 }
 
-.filterLabel input[type="checkbox"] {
-  margin-right: 8px;
+.filterLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 12px;
+  border: 1px solid var(--color-neutral-light);
+  background-color: var(--color-neutral-lightest);
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+}
+
+.filterLabel:hover {
+  border-color: var(--color-primary);
+}
+
+.filterLabel.selected {
+  border: 1px solid var(--color-accent-dark);
+  color: var(--color-primary-dark);
+}
+
+.hiddenCheckbox {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
 .filterLabel svg {
-  width: 20px;
-  height: 20px;
-  margin-right: 8px;
-  fill: currentColor;
+  width: 24px;
+  height: 24px;
+  color: var(--color-primary-dark);
+  fill: var(--color-primary);
 }
 
-.filterLabel {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  color: #249715;
+.filterLabel:hover svg,
+.filterLabel.selected svg {
+  color: var(--color-accent-dark);
+  fill: var(--color-primary-dark);
 }
 
-.filterLabel input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  accent-color: #249715;
+.filterLabel span {
+  font-size: 14px;
+  color: var(--color-primary);
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+}
+.filterLabel.selected span {
+  color: var(--color-primary-dark);
+  font-weight: bold;
 }
 
 .resetFiltersButton {
@@ -456,4 +485,46 @@
 
 .outOfFavoritesButton:hover {
   background-color: #ff3333;
+}
+
+.filterTile {
+  position: relative;
+  cursor: pointer;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 8px;
+  padding: 12px;
+  transition: all 0.2s ease-in-out;
+}
+
+.filterTile:hover {
+  border-color: var(--color-primary);
+}
+
+.filterTile.selected {
+  border-color: var(--color-primary);
+  background-color: var(--color-neutral-lightest);
+}
+
+.tileContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.filterIcon {
+  width: 24px;
+  height: 24px;
+  color: var(--color-primary-dark);
+}
+
+.filterTile:hover .filterIcon,
+.filterTile.selected .filterIcon {
+  color: var(--color-primary);
+}
+
+.tileContent span {
+  font-size: 14px;
+  color: var(--color-primary-dark);
 }

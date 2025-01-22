@@ -31,7 +31,7 @@ import { toggleFavorite, toggleShowFavorites, selectFavorites, selectShowFavorit
 import styles from './Catalog.module.css';
 
 const EQUIPMENT_OPTIONS = [
-  { key: 'AC', label: 'Air Conditioning', icon: 'icon-wind' },
+  { key: 'AC', label: 'Air Condit..', icon: 'icon-wind' },
   { key: 'bathroom', label: 'Bathroom', icon: 'icon-shower' },
   { key: 'kitchen', label: 'Kitchen', icon: 'icon-cup-hot' },
   { key: 'TV', label: 'TV', icon: 'icon-tv' },
@@ -43,21 +43,21 @@ const EQUIPMENT_OPTIONS = [
 ];
 
 const ENGINE_OPTIONS = [
-  { value: 'petrol', label: 'Petrol', icon: 'icon-fuel' },
-  { value: 'diesel', label: 'Diesel', icon: 'icon-fuel' },
-  { value: 'hybrid', label: 'Hybrid', icon: 'icon-fuel' },
-  { value: 'gas', label: 'Gas', icon: 'icon-fuel' }
+  { key: 'petrol', label: 'Petrol', icon: 'icon-fuel' },
+  { key: 'diesel', label: 'Diesel', icon: 'icon-fuel' },
+  { key: 'hybrid', label: 'Hybrid', icon: 'icon-fuel' },
+  { key: 'gas', label: 'Gas', icon: 'icon-fuel' }
 ];
 
 const TRANSMISSION_OPTIONS = [
-  { value: 'automatic', label: 'Automatic', icon: 'icon-diagram' },
-  { value: 'manual', label: 'Manual', icon: 'icon-diagram' }
+  { key: 'automatic', label: 'Automatic', icon: 'icon-diagram' },
+  { key: 'manual', label: 'Manual', icon: 'icon-diagram' }
 ];
 
 const VEHICLE_TYPE_OPTIONS = [
-  { value: 'alcove', label: 'Alcove', icon: 'icon-bi_grid' },
-  { value: 'fullyIntegrated', label: 'Fully Integrated', icon: 'icon-bi_grid-3x3' },
-  { value: 'panelTruck', label: 'Panel Truck', icon: 'icon-bi_grid-1x2' }
+  { key: 'alcove', label: 'Alcove', icon: 'icon-bi_grid' },
+  { key: 'fullyIntegrated', label: 'Fully Integrated', icon: 'icon-bi_grid-3x3' },
+  { key: 'panelTruck', label: 'Panel Truck', icon: 'icon-bi_grid-1x2' }
 ];
 
 const Catalog = () => {
@@ -181,24 +181,39 @@ const Catalog = () => {
     }
   };
 
-  const handleEngineChange = (value) => {
-    dispatch(setEngineFilter(value));
+  const handleEngineChange = (key) => {
+    // Toggle the selected engine type
+    const newEngines = filters.engines.includes(key)
+      ? filters.engines.filter(engine => engine !== key)
+      : [...filters.engines, key];
+    
+    dispatch(setEngineFilter(newEngines));
     if (isAutoSearch) {
       dispatch(resetPagination());
       dispatch(searchCampers({ page: 1 }));
     }
   };
 
-  const handleTransmissionChange = (value) => {
-    dispatch(setTransmissionFilter(value));
+  const handleTransmissionChange = (key) => {
+    // Toggle the selected transmission type
+    const newTransmissions = filters.transmissions.includes(key)
+      ? filters.transmissions.filter(transmission => transmission !== key)
+      : [...filters.transmissions, key];
+    
+    dispatch(setTransmissionFilter(newTransmissions));
     if (isAutoSearch) {
       dispatch(resetPagination());
       dispatch(searchCampers({ page: 1 }));
     }
   };
 
-  const handleFormChange = (value) => {
-    dispatch(setFormFilter(value));
+  const handleFormChange = (key) => {
+    // Toggle the selected form type
+    const newForms = filters.forms.includes(key)
+      ? filters.forms.filter(form => form !== key)
+      : [...filters.forms, key];
+    
+    dispatch(setFormFilter(newForms));
     if (isAutoSearch) {
       dispatch(resetPagination());
       dispatch(searchCampers({ page: 1 }));
@@ -237,30 +252,8 @@ const Catalog = () => {
       return campers.filter(camper => favoriteIds.includes(camper.id));
     }
 
-    // Otherwise apply normal filters
-    return campers.filter(camper => {
-      // Location filter
-      const matchesLocation = !filters?.location || 
-        camper.location.toLowerCase().includes(filters.location.toLowerCase());
-
-      // Form filter
-      const matchesForm = !filters?.form || filters.form === camper.form;
-
-      // Transmission filter
-      const matchesTransmission = !filters?.transmission || 
-        filters.transmission === camper.transmission;
-
-      // Engine filter
-      const matchesEngine = !filters?.engine || filters.engine === camper.engine;
-
-      // Features filter
-      const matchesFeatures = !filters?.features?.length || 
-        filters.features.every(feature => camper.features[feature]);
-
-      return matchesLocation && matchesForm && matchesTransmission && 
-             matchesEngine && matchesFeatures;
-    });
-  }, [campers, filters, showFavorites, favoriteIds]);
+    return campers;
+  }, [campers, showFavorites, favoriteIds]);
 
   if (error) {
     return <div className={styles.error}>Error: {error}</div>;
@@ -269,12 +262,12 @@ const Catalog = () => {
   return (
     <div className={styles.catalogContainer}>
       <div className={styles.filtersColumn}>
-        <h2 className={styles.filtersTitle}>Filters</h2>
         
         {/* Location Filter */}
         <div className={styles.filterSection}>
-          <h3>Location</h3>
+        <h4>Location</h4>
           <div className={styles.locationInputContainer} ref={locationInputRef}>
+            <Icon name="icon-map" className={styles.locationIcon} />
             <input
               type="text"
               value={locationInput}
@@ -321,73 +314,85 @@ const Catalog = () => {
               </div>
             )}
             {isLoadingLocations && (
-              <div className={styles.loadingLocations}>Loading...</div>
+              <div className={styles.loadingLocations} style={{ left: '50%' }}>Loading...</div>
             )}
           </div>
         </div>
-
+        <h4 className={styles.filtersTitle}>Filters</h4>
         {/* Equipment Filter */}
         <div className={styles.filterSection}>
           <h3>Vehicle Equipment</h3>
-          {EQUIPMENT_OPTIONS.map(({ key, label, icon }) => (
-            <label key={key} className={styles.filterLabel}>
-              <input
-                type="checkbox"
-                checked={filters.equipment[key]}
-                onChange={() => handleEquipmentChange(key)}
-              />
-              <Icon name={icon} />
-              {label}
-            </label>
-          ))}
+          <div className={styles.filterGrid}>
+            {EQUIPMENT_OPTIONS.map(({ key, label, icon }) => (
+              <label key={key} className={`${styles.filterLabel} ${filters.equipment[key] ? styles.selected : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={filters.equipment[key]}
+                  onChange={() => handleEquipmentChange(key)}
+                  className={styles.hiddenCheckbox}
+                />
+                <Icon name={icon} />
+                <span>{label}</span>
+              </label>
+            ))}
+          </div>
         </div>
 
         {/* Engine Filter */}
         <div className={styles.filterSection}>
           <h3>Engine Type</h3>
-          {ENGINE_OPTIONS.map(({ value, label, icon }) => (
-            <label key={value} className={styles.filterLabel}>
-              <input
-                type="checkbox"
-                checked={filters.engines.includes(value)}
-                onChange={() => handleEngineChange(value)}
-              />
-              <Icon name={icon} />
-              {label}
-            </label>
-          ))}
+          <div className={styles.filterGrid}>
+            {ENGINE_OPTIONS.map(({ key, label, icon }) => (
+              <label key={key} className={`${styles.filterLabel} ${filters.engines.includes(key) ? styles.selected : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={filters.engines.includes(key)}
+                  onChange={() => handleEngineChange(key)}
+                  className={styles.hiddenCheckbox}
+                />
+                <Icon name={icon} />
+                <span>{label}</span>
+              </label>
+            ))}
+          </div>
         </div>
 
         {/* Transmission Filter */}
         <div className={styles.filterSection}>
           <h3>Transmission</h3>
-          {TRANSMISSION_OPTIONS.map(({ value, label, icon }) => (
-            <label key={value} className={styles.filterLabel}>
-              <input
-                type="checkbox"
-                checked={filters.transmissions.includes(value)}
-                onChange={() => handleTransmissionChange(value)}
-              />
-              <Icon name={icon} />
-              {label}
-            </label>
-          ))}
+          <div className={styles.filterGrid}>
+            {TRANSMISSION_OPTIONS.map(({ key, label, icon }) => (
+              <label key={key} className={`${styles.filterLabel} ${filters.transmissions.includes(key) ? styles.selected : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={filters.transmissions.includes(key)}
+                  onChange={() => handleTransmissionChange(key)}
+                  className={styles.hiddenCheckbox}
+                />
+                <Icon name={icon} />
+                <span>{label}</span>
+              </label>
+            ))}
+          </div>
         </div>
 
         {/* Vehicle Type Filter */}
         <div className={styles.filterSection}>
           <h3>Vehicle Type</h3>
-          {VEHICLE_TYPE_OPTIONS.map(({ value, label, icon }) => (
-            <label key={value} className={styles.filterLabel}>
-              <input
-                type="checkbox"
-                checked={filters.forms.includes(value)}
-                onChange={() => handleFormChange(value)}
-              />
-              <Icon name={icon} />
-              {label}
-            </label>
-          ))}
+          <div className={styles.filterGrid}>
+            {VEHICLE_TYPE_OPTIONS.map(({ key, label, icon }) => (
+              <label key={key} className={`${styles.filterLabel} ${filters.forms.includes(key) ? styles.selected : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={filters.forms.includes(key)}
+                  onChange={() => handleFormChange(key)}
+                  className={styles.hiddenCheckbox}
+                />
+                <Icon name={icon} />
+                <span>{label}</span>
+              </label>
+            ))}
+          </div>
         </div>
 
         {/* Search Mode Toggle */}
