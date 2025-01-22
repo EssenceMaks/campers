@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import Icon from '../../components/Icon/Icon';
 import { 
   searchCampers,
@@ -168,7 +169,9 @@ const CamperCard = ({ camper, onFavoriteClick, isFavorite }) => {
       </div>
 
       <div className={styles.button}>
-        <button className={styles.showMoreButton}>Show more</button>
+        <Link to={`/catalog/${camper.id}`} className={styles.showMoreButton}>
+          Show more
+        </Link>
       </div>
     </div>
   );
@@ -579,7 +582,7 @@ const Catalog = () => {
         
         {!isLoading && !showFavorites && hasMore && (
           <button 
-            className={styles.loadMore}
+            className={styles.loadMoreButton}
             onClick={handleLoadMore}
           >
             Load More

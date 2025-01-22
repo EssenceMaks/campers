@@ -245,17 +245,21 @@
 
 .camperCard {
   display: grid;
-  grid-template-columns: 292px 1fr 1fr;
+  grid-template-columns: 292px 2fr 1fr;
+  grid-template-rows: minmax(32px, fit-content) 24px minmax(50px, auto) 1fr 46px;
   grid-template-areas:
     "picture title price"
     "picture reviewslocation reviewslocation"
     "picture description description"
     "picture features features"
     "picture button button";
-  height: 368px;
+  height: 320px;
   width: 100%;
   max-width: 840px;
   padding: 24px;
+  margin-bottom: 32px;
+  gap: 8px;
+  text-align: left;
   background: white;
   border-radius: 8px;
   overflow: hidden;
@@ -277,39 +281,84 @@
 
 .camperTitle {
   grid-area: title;
+  height: fit-content;
   font-size: 24px;
   font-weight: bold;
   color: var(--color-primary-dark);
   margin: 0;
-  padding-left: 24px;
+  padding-left: 17px;
+  display: flex;
+  align-items: flex-start;
 }
 
 .priceContainer {
   grid-area: price;
+  height: 32px;
   display: flex;
-  align-items: center;
   justify-content: flex-end;
+  align-items: flex-start;
   gap: 12px;
+  padding-right: 24px;
+  height: 32px;
 }
 
 .camperPrice {
   font-size: 24px;
   font-weight: bold;
   color: var(--color-primary-dark);
-  text-align: right;
   margin: 0;
+}
+
+.reviewsLocation {
+  grid-area: reviewslocation;
+  display: flex;
+  justify-content: normal;
+  padding-left: 24px;
+  padding-right: 24px;
+  margin: 0;
+  gap: 8px;
+}
+
+.reviews {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  color: var(--color-primary-dark);
+  font-weight: 400;
+  font-size: 16px;
+}
+
+.location {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  color: var(--color-primary-dark);
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.reviews svg, .location svg {
+  width: 16px;
+  height: 16px;
+  padding-top: 5px;
+  vertical-align: -3px;
+  color: var(--color-primary-dark);
+}
+
+.reviews svg {
+  fill: var(--color-accent-light);
 }
 
 .favoriteIcon {
   display: flex;
   align-items: center;
   cursor: pointer;
-  padding: 4px;
+  padding: 8px 4px;
 }
 
 .icon {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   color: var(--color-neutral);
   fill: var(--color-neutral);
   transition: all 0.2s ease-in-out;
@@ -324,37 +373,17 @@
   transform: scale(1.1);
 }
 
-.reviewsLocation {
-  grid-area: reviewslocation;
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  padding-left: 24px;
-  margin-top: 8px;
-}
-
-.reviews, .location {
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-  gap: 8px;
-  color: var(--color-primary-dark);
-}
-
-.reviews svg, .location svg {
-  width: 16px;
-  height: 16px;
-  vertical-align: -3px;
-  color: var(--color-primary);
-}
-
 .description {
   grid-area: description;
   padding-left: 24px;
-  margin-top: 16px;
+  height: fit-content;
   color: var(--color-primary);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.5;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .features {
@@ -363,7 +392,7 @@
   flex-wrap: wrap;
   gap: 6px;
   padding-left: 24px;
-  margin-top: 16px;
+  height: fit-content;
 }
 
 .feature {
@@ -372,32 +401,40 @@
   gap: 6px;
   padding: 6px 10px;
   background-color: var(--color-neutral-lightest);
-  border-radius: 4px;
-  color: var(--color-primary);
-  font-size: 13px;
+  height: 24px;
+  border-radius:200px;
+  color: var(--color-primary-dark);
+  font-size: 16px;
+  font-weight: 600;
   border: 1px solid var(--color-neutral-light);
 }
 
 .feature svg {
-  width: 14px;
-  height: 14px;
-  color: var(--color-primary);
+  width: 16px;
+  height: 16px;
+  color: var(--color-primary-dark);
 }
 
 .button {
   grid-area: button;
   padding-left: 24px;
-  margin-top: 16px;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
 }
 
 .showMoreButton {
   padding: 8px 24px;
   background-color: var(--color-accent);
+  height: 46px;
+  width: 136px;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 200px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 18px;
+  text-align: center;
+  line-height: 46px;
   transition: background-color 0.2s ease;
 }
 
@@ -425,16 +462,18 @@
   display: block;
   margin: 2rem auto;
   padding: 0.75rem 2rem;
-  background: #2196f3;
-  color: white;
-  border: none;
-  border-radius: 4px;
+  background: var(--color-white);
+  color: var(--color-primary-dark);
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 200px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s;
 }
 
 .loadMoreButton:hover {
-  background: #1976d2;
+  background: var(--color-accent);
+  border: 1px solid var(--color-accent-dark);
+  color: var(--color-white);
 }
 
 .loading {
