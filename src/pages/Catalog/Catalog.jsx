@@ -61,9 +61,14 @@ const VEHICLE_TYPE_OPTIONS = [
   { key: 'panelTruck', label: 'Van', icon: 'icon-bi_grid-1x2' }
 ];
 
+const truncateTitle = (title, maxLength = 23) => {
+  if (title.length <= maxLength) return title;
+  return `${title.slice(0, maxLength)}...`;
+};
+
 const CamperCard = ({ camper, onFavoriteClick, isFavorite }) => {
   // Добавляем console.log для проверки структуры данных
-  console.log('Camper data:', camper);
+  
 
   return (
     <div className={styles.camperCard}>
@@ -76,7 +81,7 @@ const CamperCard = ({ camper, onFavoriteClick, isFavorite }) => {
           e.target.src = 'https://via.placeholder.com/300x200?text=No+Image';
         }}
       />
-      <h3 className={styles.camperTitle}>{camper.name}</h3>
+      <h3 title={camper.name} className={styles.camperTitle}>{truncateTitle(camper.name)}</h3>
       <div className={styles.priceContainer}>
         <p className={styles.camperPrice}>€{camper.price.toLocaleString('de-DE')},00</p>
         <div className={styles.favoriteIcon} onClick={() => onFavoriteClick(camper.id)}>
@@ -109,7 +114,13 @@ const CamperCard = ({ camper, onFavoriteClick, isFavorite }) => {
         {camper.features?.AC && (
           <span className={styles.feature}>
             <Icon name="icon-wind" />
-            AC
+            Air Condit..
+          </span>
+        )}
+        {camper.features?.bathroom && (
+          <span className={styles.feature}>
+            <Icon name="icon-shower" />
+            Bathroom
           </span>
         )}
         {camper.features?.kitchen && (
@@ -124,16 +135,34 @@ const CamperCard = ({ camper, onFavoriteClick, isFavorite }) => {
             TV
           </span>
         )}
-        {camper.features?.bathroom && (
-          <span className={styles.feature}>
-            <Icon name="icon-shower" />
-            Bathroom
-          </span>
-        )}
         {camper.features?.radio && (
           <span className={styles.feature}>
             <Icon name="icon-radio" />
             Radio
+          </span>
+        )}
+        {camper.features?.refrigerator && (
+          <span className={styles.feature}>
+            <Icon name="icon-fridge" />
+            Refrigerator
+          </span>
+        )}
+        {camper.features?.microwave && (
+          <span className={styles.feature}>
+            <Icon name="icon-microwave" />
+            Microwave
+          </span>
+        )}
+        {camper.features?.gas && (
+          <span className={styles.feature}>
+            <Icon name="icon-gas" />
+            Gas
+          </span>
+        )}
+        {camper.features?.water && (
+          <span className={styles.feature}>
+            <Icon name="icon-water" />
+            Water
           </span>
         )}
 

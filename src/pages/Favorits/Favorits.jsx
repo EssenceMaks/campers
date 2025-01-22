@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from '../../components/Icon/Icon';
 import { 
@@ -96,6 +96,13 @@ const Catalog = () => {
     dispatch(resetPagination());
     dispatch(resetCampers());
     dispatch(searchCampers({ page: 1 }));
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(toggleShowFavorites()); // Включаем режим избранного при монтировании
+    return () => {
+      dispatch(toggleShowFavorites()); // Выключаем при размонтировании
+    };
   }, [dispatch]);
 
   useEffect(() => {
@@ -249,7 +256,7 @@ const Catalog = () => {
     
     // If showing favorites, return all favorited campers without filtering
     if (showFavorites) {
-      return campers.filter(camper => favoriteIds.includes(camper.id));
+    return campers.filter(camper => favoriteIds.includes(camper.id));
     }
 
     return campers;
@@ -261,257 +268,147 @@ const Catalog = () => {
 
   return (
     <div className={styles.catalogContainer}>
-      <div className={styles.filtersColumn}>
-        
-        {/* Location Filter */}
-        <div className={styles.filterSection}>
-        <h4>Location</h4>
-          <div className={styles.locationInputContainer} ref={locationInputRef}>
-            <Icon name="icon-map" className={styles.locationIcon} />
-            <input
-              type="text"
-              value={locationInput}
-              onChange={handleLocationInputChange}
-              onBlur={handleLocationBlur}
-              placeholder="Enter city..."
-              className={`${styles.locationInput} ${isInvalidCity ? styles.invalidInput : ''}`}
-            />
-            <button 
-              className={styles.locationDropdownButton}
-              onClick={() => {
-                setShowSuggestions(!showSuggestions);
-                dispatch(searchLocations(''));
-              }}
-              title="Show all locations"
-            >
-              ▼
-            </button>
-            {locationInput && (
-              <button 
-                className={styles.locationClearButton}
-                onClick={handleLocationClear}
-                title="Clear location"
-              >
-                ✕
-              </button>
-            )}
-            {showSuggestions && locationSuggestions.length > 0 && (
-              <ul className={styles.suggestionsList}>
-                {locationSuggestions.map((location, index) => (
-                  <li
-                    key={index}
-                    onClick={() => handleLocationSelect(location)}
-                    className={styles.suggestionItem}
-                  >
-                    {location}
-                  </li>
-                ))}
-              </ul>
-            )}
-            {isInvalidCity && (
-              <div className={styles.errorMessage}>
-                No campers available in this city
-              </div>
-            )}
-            {isLoadingLocations && (
-              <div className={styles.loadingLocations} style={{ left: '50%' }}>Loading...</div>
-            )}
-          </div>
-        </div>
-        <h4 className={styles.filtersTitle}>Filters</h4>
-        {/* Equipment Filter */}
-        <div className={styles.filterSection}>
-          <h3>Vehicle Equipment</h3>
-          <div className={styles.filterGrid}>
-            {EQUIPMENT_OPTIONS.map(({ key, label, icon }) => (
-              <label key={key} className={`${styles.filterLabel} ${filters.equipment[key] ? styles.selected : ''}`}>
-                <input
-                  type="checkbox"
-                  checked={filters.equipment[key]}
-                  onChange={() => handleEquipmentChange(key)}
-                  className={styles.hiddenCheckbox}
-                />
-                <Icon name={icon} />
-                <span>{label}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Engine Filter */}
-        <div className={styles.filterSection}>
-          <h3>Engine Type</h3>
-          <div className={styles.filterGrid}>
-            {ENGINE_OPTIONS.map(({ key, label, icon }) => (
-              <label key={key} className={`${styles.filterLabel} ${filters.engines.includes(key) ? styles.selected : ''}`}>
-                <input
-                  type="checkbox"
-                  checked={filters.engines.includes(key)}
-                  onChange={() => handleEngineChange(key)}
-                  className={styles.hiddenCheckbox}
-                />
-                <Icon name={icon} />
-                <span>{label}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Transmission Filter */}
-        <div className={styles.filterSection}>
-          <h3>Transmission</h3>
-          <div className={styles.filterGrid}>
-            {TRANSMISSION_OPTIONS.map(({ key, label, icon }) => (
-              <label key={key} className={`${styles.filterLabel} ${filters.transmissions.includes(key) ? styles.selected : ''}`}>
-                <input
-                  type="checkbox"
-                  checked={filters.transmissions.includes(key)}
-                  onChange={() => handleTransmissionChange(key)}
-                  className={styles.hiddenCheckbox}
-                />
-                <Icon name={icon} />
-                <span>{label}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Vehicle Type Filter */}
-        <div className={styles.filterSection}>
-          <h3>Vehicle Type</h3>
-          <div className={styles.filterGrid}>
-            {VEHICLE_TYPE_OPTIONS.map(({ key, label, icon }) => (
-              <label key={key} className={`${styles.filterLabel} ${filters.forms.includes(key) ? styles.selected : ''}`}>
-                <input
-                  type="checkbox"
-                  checked={filters.forms.includes(key)}
-                  onChange={() => handleFormChange(key)}
-                  className={styles.hiddenCheckbox}
-                />
-                <Icon name={icon} />
-                <span>{label}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Search Mode Toggle */}
-        <div className={styles.searchModeToggle}>
-          <h4>Search Settings</h4>
-          <div className={styles.searchModeContainer}>
-            <button 
-              className={`${styles.searchModeButton} ${isAutoSearch ? styles.active : ''}`}
-              onClick={handleSearchModeToggle}
-            >
-              Auto-Search
-            </button>
-            <span className={styles.searchModeDivider}>|</span>
-            <button 
-              className={`${styles.searchModeButton} ${!isAutoSearch ? styles.active : ''}`}
-              onClick={handleSearchModeToggle}
-            >
-              Search
-            </button>
-          </div>
-
-          <button 
-            className={`${styles.searchButton} ${!isAutoSearch ? styles.active : ''}`}
-            onClick={handleManualSearch}
-          >
-            Search Campers
-          </button>
-
-          <div className={styles.filtersActions}>
-            <button 
-              className={styles.resetButton}
-              onClick={handleResetFilters}
-            >
-              Reset All Filters
-            </button>
-            <button
-              className={styles.resetButton}
-              onClick={() => dispatch(toggleShowFavorites())}
-            >
-              Show Favorites ({favoriteIds.length || 0}) <Icon name="icon-heart" className={favoriteIds.length > 0 ? styles.activeHeart : styles.emptyHeart} />
-            </button>
-          </div>
-        </div>
-      </div>
+      
 
       <div className={styles.variantsColumn}>
         {showFavorites && (
           <div className={styles.favoritesHeader}>
             <h2>Favorites ({favoriteIds.length})</h2>
-            <button
-              className={styles.outOfFavoritesButton}
-              onClick={() => dispatch(toggleShowFavorites())}
-            >
-              Out of favorites
-            </button>
+
           </div>
         )}
         <div className={styles.campersGrid}>
           {filteredCampers.map((camper) => (
-            <div key={camper.id} className={styles.camperCard}>
-              <div className={styles.cardImageContainer}>
-                <img 
-                  src={camper.mainImage} 
-                  alt={camper.name} 
-                  className={styles.camperImage}
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = 'https://via.placeholder.com/300x200?text=No+Image';
-                  }}
-                />
-              </div>
-              <div className={styles.camperInfo}>
-                <div className={styles.camperHeader}>
-                  <h3>{camper.name}</h3>
-                  <div className={styles.priceHeart}>
-                    <span className={styles.price}>€{camper.price.toFixed(2)}</span>
-                    <button 
-                      className={`${styles.heartButton} ${favoriteIds.includes(camper.id) ? styles.heartActive : ''}`}
-                      onClick={() => dispatch(toggleFavorite(camper.id))}
-                    >
-                      {favoriteIds.includes(camper.id) ? '♥' : '♡'}
-                    </button>
+              <div key={camper.id} className={styles.camperCard}>
+                <div className={styles.cardImageContainer}>
+                  <img 
+                    src={camper.mainImage} 
+                    alt={camper.name} 
+                    className={styles.camperImage}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'https://via.placeholder.com/300x200?text=No+Image';
+                    }}
+                  />
+                </div>
+                <div className={styles.camperInfo}>
+                  <div className={styles.camperHeader}>
+                    <h3>{camper.name}</h3>
+                    <div className={styles.priceHeart}>
+                      <span className={styles.price}>€{camper.price.toFixed(2)}</span>
+                      <button 
+                        className={`${styles.heartButton} ${favoriteIds.includes(camper.id) ? styles.heartActive : ''}`}
+                        onClick={() => dispatch(toggleFavorite(camper.id))}
+                      >
+                        {favoriteIds.includes(camper.id) ? '♥' : '♡'}
+                      </button>
+                    </div>
                   </div>
+                  <div className={styles.location}>
+                    <span className={styles.rating}>★ {camper.rating}</span>
+                    <span className={styles.reviewsCount}>({camper.reviews} {camper.reviews === 1 ? 'Review' : 'Reviews'})</span>
+                    <span className={styles.locationText}>{camper.location}</span>
+                  </div>
+                  <p className={styles.description}>{camper.description}</p>
+                  <div className={styles.features}>
+                    {/* Vehicle Equipment */}
+                    {camper.features?.AC && (
+                      <span className={styles.feature}>
+                        <Icon name="icon-wind" />
+                        Air Condit..
+                      </span>
+                    )}
+                    {camper.features?.bathroom && (
+                      <span className={styles.feature}>
+                        <Icon name="icon-shower" />
+                        Bathroom
+                      </span>
+                    )}
+                    {camper.features?.kitchen && (
+                      <span className={styles.feature}>
+                        <Icon name="icon-cup-hot" />
+                        Kitchen
+                      </span>
+                    )}
+                    {camper.features?.TV && (
+                      <span className={styles.feature}>
+                        <Icon name="icon-tv" />
+                        TV
+                      </span>
+                    )}
+                    {camper.features?.radio && (
+                      <span className={styles.feature}>
+                        <Icon name="icon-radio" />
+                        Radio
+                      </span>
+                    )}
+                    {camper.features?.refrigerator && (
+                      <span className={styles.feature}>
+                        <Icon name="icon-fridge" />
+                        Refrigerator
+                      </span>
+                    )}
+                    {camper.features?.microwave && (
+                      <span className={styles.feature}>
+                        <Icon name="icon-microwave" />
+                        Microwave
+                      </span>
+                    )}
+                    {camper.features?.gas && (
+                      <span className={styles.feature}>
+                        <Icon name="icon-gas" />
+                        Gas
+                      </span>
+                    )}
+                    {camper.features?.water && (
+                      <span className={styles.feature}>
+                        <Icon name="icon-water" />
+                        Water
+                      </span>
+                    )}
+
+                    {/* Vehicle Type */}
+                    {camper.form && (
+                      <span className={styles.feature}>
+                        <Icon name={
+                          camper.form === 'alcove' ? 'icon-bi_grid' :
+                          camper.form === 'fullyIntegrated' ? 'icon-bi_grid-3x3' :
+                          'icon-bi_grid-1x2'
+                        } />
+                        {camper.form === 'fullyIntegrated' ? 'Integrated' :
+                         camper.form === 'panelTruck' ? 'Van' :
+                         'Alcove'}
+                      </span>
+                    )}
+
+                    {/* Engine Type */}
+                    {camper.features?.engine && (
+                      <span className={styles.feature}>
+                        <Icon name="icon-fuel" />
+                        {camper.features.engine}
+                      </span>
+                    )}
+
+                    {/* Transmission */}
+                    {camper.features?.transmission && (
+                      <span className={styles.feature}>
+                        <Icon name="icon-diagram" />
+                        {camper.features.transmission}
+                      </span>
+                    )}
+                  </div>
+                  <a 
+                    href={`/catalog/${camper.id}`}
+                    className={styles.showMore}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Show more
+                  </a>
                 </div>
-                <div className={styles.location}>
-                  <span className={styles.rating}>★ {camper.rating}</span>
-                  <span className={styles.reviewsCount}>({camper.reviews} {camper.reviews === 1 ? 'Review' : 'Reviews'})</span>
-                  <span className={styles.locationText}>{camper.location}</span>
-                </div>
-                <p className={styles.description}>{camper.description}</p>
-                <div className={styles.features}>
-                  {camper.features.transmission && (
-                    <span className={styles.feature}>
-                      {camper.features.transmission}
-                    </span>
-                  )}
-                  {camper.features.engine && (
-                    <span className={styles.feature}>
-                      {camper.features.engine}
-                    </span>
-                  )}
-                  {camper.form && (
-                    <span className={styles.feature}>
-                      {camper.form}
-                    </span>
-                  )}
-                </div>
-                <a 
-                  href={`/catalog/${camper.id}`}
-                  className={styles.showMore}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Show more
-                </a>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
         
         {isLoading && <div className={styles.loading}>Loading...</div>}
         
