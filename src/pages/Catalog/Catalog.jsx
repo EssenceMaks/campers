@@ -60,6 +60,120 @@ const VEHICLE_TYPE_OPTIONS = [
   { key: 'panelTruck', label: 'Van', icon: 'icon-bi_grid-1x2' }
 ];
 
+const CamperCard = ({ camper, onFavoriteClick, isFavorite }) => {
+  // Добавляем console.log для проверки структуры данных
+  console.log('Camper data:', camper);
+
+  return (
+    <div className={styles.camperCard}>
+      <img
+        src={camper.mainImage || camper.gallery?.[0]} 
+        alt={camper.name}
+        className={styles.camperImage}
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = 'https://via.placeholder.com/300x200?text=No+Image';
+        }}
+      />
+      <h3 className={styles.camperTitle}>{camper.name}</h3>
+      <div className={styles.priceContainer}>
+        <p className={styles.camperPrice}>€{camper.price.toLocaleString('de-DE')},00</p>
+        <div className={styles.favoriteIcon} onClick={() => onFavoriteClick(camper.id)}>
+          <Icon 
+            name="icon-heart" 
+            className={`${styles.icon} ${isFavorite ? styles.iconFilled : ''}`} 
+          />
+        </div>
+      </div>
+      
+      <div className={styles.reviewsLocation}>
+        <div className={styles.reviews}>
+          <Icon name="icon-star" />
+          {camper.rating} ({camper.reviews} Reviews)
+        </div>
+        <div className={styles.location}>
+          <Icon name="icon-map" />
+          {camper.location}
+        </div>
+      </div>
+
+      <p className={styles.description}>
+        {camper.description?.length > 100
+          ? `${camper.description.substring(0, 100)}...`
+          : camper.description}
+      </p>
+
+      <div className={styles.features}>
+        {/* Vehicle Equipment */}
+        {camper.features?.AC && (
+          <span className={styles.feature}>
+            <Icon name="icon-wind" />
+            AC
+          </span>
+        )}
+        {camper.features?.kitchen && (
+          <span className={styles.feature}>
+            <Icon name="icon-cup-hot" />
+            Kitchen
+          </span>
+        )}
+        {camper.features?.TV && (
+          <span className={styles.feature}>
+            <Icon name="icon-tv" />
+            TV
+          </span>
+        )}
+        {camper.features?.bathroom && (
+          <span className={styles.feature}>
+            <Icon name="icon-shower" />
+            Bathroom
+          </span>
+        )}
+        {camper.features?.radio && (
+          <span className={styles.feature}>
+            <Icon name="icon-radio" />
+            Radio
+          </span>
+        )}
+
+        {/* Vehicle Type */}
+        {camper.form && (
+          <span className={styles.feature}>
+            <Icon name={
+              camper.form === 'alcove' ? 'icon-bi_grid' :
+              camper.form === 'fullyIntegrated' ? 'icon-bi_grid-3x3' :
+              'icon-bi_grid-1x2'
+            } />
+            {camper.form === 'fullyIntegrated' ? 'Integrated' :
+             camper.form === 'panelTruck' ? 'Van' :
+             'Alcove'}
+          </span>
+        )}
+
+        {/* Engine Type */}
+        {camper.features?.engine && (
+          <span className={styles.feature}>
+            <Icon name="icon-fuel" />
+            {camper.features.engine}
+          </span>
+        )}
+
+        {/* Transmission */}
+        {camper.features?.transmission && (
+          <span className={styles.feature}>
+            <Icon name="icon-diagram" />
+            {camper.features.transmission}
+          </span>
+        )}
+      </div>
+
+      <div className={styles.button}>
+        <button className={styles.showMoreButton}>Show more</button>
+      </div>
+    </div>
+  );
+};
+
 const Catalog = () => {
   const dispatch = useDispatch();
   const campers = useSelector(selectCampers);
@@ -452,64 +566,12 @@ const Catalog = () => {
         )}
         <div className={styles.campersGrid}>
           {filteredCampers.map((camper) => (
-            <div key={camper.id} className={styles.camperCard}>
-              <div className={styles.cardImageContainer}>
-                <img 
-                  src={camper.mainImage} 
-                  alt={camper.name} 
-                  className={styles.camperImage}
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = 'https://via.placeholder.com/300x200?text=No+Image';
-                  }}
-                />
-              </div>
-              <div className={styles.camperInfo}>
-                <div className={styles.camperHeader}>
-                  <h3>{camper.name}</h3>
-                  <div className={styles.priceHeart}>
-                    <span className={styles.price}>€{camper.price.toFixed(2)}</span>
-                    <button 
-                      className={`${styles.heartButton} ${favoriteIds.includes(camper.id) ? styles.heartActive : ''}`}
-                      onClick={() => dispatch(toggleFavorite(camper.id))}
-                    >
-                      {favoriteIds.includes(camper.id) ? '♥' : '♡'}
-                    </button>
-                  </div>
-                </div>
-                <div className={styles.location}>
-                  <span className={styles.rating}>★ {camper.rating}</span>
-                  <span className={styles.reviewsCount}>({camper.reviews} {camper.reviews === 1 ? 'Review' : 'Reviews'})</span>
-                  <span className={styles.locationText}>{camper.location}</span>
-                </div>
-                <p className={styles.description}>{camper.description}</p>
-                <div className={styles.features}>
-                  {camper.features.transmission && (
-                    <span className={styles.feature}>
-                      {camper.features.transmission}
-                    </span>
-                  )}
-                  {camper.features.engine && (
-                    <span className={styles.feature}>
-                      {camper.features.engine}
-                    </span>
-                  )}
-                  {camper.form && (
-                    <span className={styles.feature}>
-                      {camper.form}
-                    </span>
-                  )}
-                </div>
-                <a 
-                  href={`/catalog/${camper.id}`}
-                  className={styles.showMore}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Show more
-                </a>
-              </div>
-            </div>
+            <CamperCard 
+              key={camper.id} 
+              camper={camper} 
+              onFavoriteClick={() => dispatch(toggleFavorite(camper.id))}
+              isFavorite={favoriteIds.includes(camper.id)}
+            />
           ))}
         </div>
         
