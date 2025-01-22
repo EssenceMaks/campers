@@ -1,4 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Header from './components/Header/Header';
 import Home from './pages/Home/Home';
 import Catalog from './pages/Catalog/Catalog';
@@ -18,6 +20,7 @@ function App() {
           <Route path="/favorits" element={<Favorits />} />
         </Routes>
       </main>
+      <ToastContainer />
     </div>
   );
 }
