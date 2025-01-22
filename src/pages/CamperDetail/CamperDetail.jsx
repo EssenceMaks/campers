@@ -4,6 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCamperById } from '../../redux/slices/campersSlice';
 import { toggleFavorite, selectFavorites } from '../../redux/slices/favoritesSlice';
 import { selectSelectedCamper, selectCampersLoading, selectCampersError } from '../../redux/slices/campersSlice';
+import { toast } from 'react-toastify';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import Gallery from '../../components/Gallery/Gallery';
 import Icon from '../../components/Icon/Icon';
 import styles from './CamperDetail.module.css';
@@ -11,12 +14,14 @@ import styles from './CamperDetail.module.css';
 const CamperDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const favoriteIds = useSelector(selectFavorites);
   const camper = useSelector(selectSelectedCamper);
   const isLoading = useSelector(selectCampersLoading);
   const error = useSelector(selectCampersError);
+  const favorites = useSelector(selectFavorites);
   const [activeTab, setActiveTab] = useState('features');
-  
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [isFormSent, setIsFormSent] = useState(false);
+
   useEffect(() => {
     if (id) {
       dispatch(fetchCamperById(id));
@@ -105,10 +110,10 @@ const CamperDetail = () => {
               </li>
             </ul>
             <div className={styles.favoriteIcon} onClick={() => dispatch(toggleFavorite(camper.id))}>
-              {!favoriteIds.includes(camper.id) && <span className={styles.favoriteText}>Add to favorites</span>}
+              {!favorites.includes(camper.id) && <span className={styles.favoriteText}>Add to favorites</span>}
               <Icon 
                 name="icon-heart" 
-                className={`${styles.icon} ${favoriteIds.includes(camper.id) ? styles.iconFilled : ''}`} 
+                className={`${styles.icon} ${favorites.includes(camper.id) ? styles.iconFilled : ''}`} 
               />
             </div>
           </div>
@@ -255,13 +260,57 @@ const CamperDetail = () => {
             <p>Stay connected! We are always ready to help you.</p>
             <form onSubmit={(e) => {
               e.preventDefault();
-              // Здесь будет логика отправки формы
+              setIsFormSent(true);
+              toast.success('Booking successful!', {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                className: styles.successToast,
+              });
             }}>
-              <input type="text" name="name" placeholder="Name*" required />
-              <input type="email" name="email" placeholder="Email*" required />
-              <input type="date" name="date" required />
-              <textarea name="comment" placeholder="Comment"></textarea>
-              <button type="submit">Send</button>
+              <div>
+                <input 
+                  type="text" 
+                  name="name" 
+                  placeholder="Name*" 
+                  required 
+                />
+              </div>
+              <div>
+                <input 
+                  type="email" 
+                  name="email" 
+                  placeholder="Email*" 
+                  required 
+                />
+              </div>
+              <div className={styles.datePickerContainer}>
+                <DatePicker
+                  selected={selectedDate}
+                  onChange={(date) => setSelectedDate(date)}
+                  dateFormat="MMMM d, yyyy"
+                  placeholderText="Booking date*"
+                  required
+                  minDate={new Date()}
+                  className={styles.datePicker}
+                  calendarClassName={styles.calendar}
+                  wrapperClassName={styles.datePickerWrapper}
+                />
+              </div>
+              <div>
+                <textarea 
+                  name="comment" 
+                  placeholder="Comment"
+                  rows="4"
+                ></textarea>
+              </div>
+              <button type="submit" disabled={isFormSent}>
+                {isFormSent ? 'Form was sent' : 'Send'}
+              </button>
             </form>
           </div>
         </div>
