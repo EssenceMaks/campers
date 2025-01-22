@@ -57,7 +57,7 @@ const TRANSMISSION_OPTIONS = [
 const VEHICLE_TYPE_OPTIONS = [
   { key: 'alcove', label: 'Alcove', icon: 'icon-bi_grid' },
   { key: 'fullyIntegrated', label: 'Fully Integrated', icon: 'icon-bi_grid-3x3' },
-  { key: 'panelTruck', label: 'Panel Truck', icon: 'icon-bi_grid-1x2' }
+  { key: 'panelTruck', label: 'Van', icon: 'icon-bi_grid-1x2' }
 ];
 
 const Catalog = () => {
@@ -396,48 +396,52 @@ const Catalog = () => {
         </div>
 
         {/* Search Mode Toggle */}
-        <div className={styles.searchModeContainer}>
-          <button 
-            className={`${styles.searchModeButton} ${isAutoSearch ? styles.active : ''}`}
-            onClick={handleSearchModeToggle}
-          >
-            Auto-Search
-          </button>
-          <span className={styles.searchModeDivider}>|</span>
-          <button 
-            className={`${styles.searchModeButton} ${!isAutoSearch ? styles.active : ''}`}
-            onClick={handleSearchModeToggle}
-          >
-            Search
-          </button>
-        </div>
-
-        {!isAutoSearch && (
-          <button 
-            className={styles.searchButton}
-            onClick={handleManualSearch}
-          >
-            Search Campers
-          </button>
-        )}
-
-        <div className={styles.filtersActions}>
-          <button 
-            className={styles.resetButton}
-            onClick={handleResetFilters}
-          >
-            Reset All Filters
-          </button>
-          {favoriteIds.length > 0 && (
-            <button
-              className={`${styles.resetButton} ${showFavorites ? styles.activeFilter : ''}`}
-              onClick={() => {
-                dispatch(toggleShowFavorites());
-              }}
+        <div className={styles.searchModeToggle}>
+          <h4>Search Settings</h4>
+          <div className={styles.searchModeContainer}>
+          
+            <button 
+              className={`${styles.searchModeButton} ${isAutoSearch ? styles.active : ''}`}
+              onClick={handleSearchModeToggle}
             >
-              Show Favorites ({favoriteIds.length})
+              Auto-Search
+            </button>
+            <span className={styles.searchModeDivider}>|</span>
+            <button 
+              className={`${styles.searchModeButton} ${!isAutoSearch ? styles.active : ''}`}
+              onClick={handleSearchModeToggle}
+            >
+              Search
+            </button>
+          </div>
+
+          {!isAutoSearch && (
+            <button 
+              className={styles.searchButton}
+              onClick={handleManualSearch}
+            >
+              Search Campers
             </button>
           )}
+
+          <div className={styles.filtersActions}>
+            <button 
+              className={styles.resetButton}
+              onClick={handleResetFilters}
+            >
+              Reset All Filters
+            </button>
+            {favoriteIds.length > 0 && (
+              <button
+                className={`${styles.resetButton} ${showFavorites ? styles.activeFilter : ''}`}
+                onClick={() => {
+                  dispatch(toggleShowFavorites());
+                }}
+              >
+                Show Favorites ({favoriteIds.length})
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
