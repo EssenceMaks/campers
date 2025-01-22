@@ -58,11 +58,50 @@ The application will be available at `http://localhost:5173`
 
 ```
 src/
-├── components/     # Reusable components
-├── pages/         # Page components
-├── redux/         # Redux store and slices
-├── styles/        # Global styles
-└── assets/        # Images and icons
+├── assets/                # Static assets
+│   ├── icons/            # SVG icons
+│   └── images/           # Images and graphics
+│
+├── components/           # Shared components
+│   ├── Gallery/         # Image gallery component
+│   │   ├── Gallery.jsx
+│   │   └── Gallery.module.css
+│   ├── Header/          # App header component
+│   │   ├── Header.jsx
+│   │   └── Header.module.css
+│   └── Icon/            # Icon component
+│       ├── Icon.jsx
+│       └── Icon.module.css
+│
+├── pages/               # Page components
+│   ├── CamperDetail/   # Single camper view
+│   │   ├── CamperDetail.jsx
+│   │   └── CamperDetail.module.css
+│   ├── Catalog/        # Campers catalog
+│   │   ├── Catalog.jsx
+│   │   └── Catalog.module.css
+│   ├── Favorits/       # Favorites page
+│   │   ├── Favorits.jsx
+│   │   └── Favorits.module.css
+│   └── Home/           # Homepage
+│       ├── Home.jsx
+│       └── Home.module.css
+│
+├── redux/              # Redux state management
+│   ├── slices/        # Redux slices
+│   │   ├── campersSlice.js
+│   │   ├── favoritesSlice.js
+│   │   ├── filtersSlice.js
+│   │   └── locationsSlice.js
+│   └── store.js       # Redux store configuration
+│
+├── styles/            # Global styles
+│   └── colors.css    # Color variables
+│
+├── App.jsx           # Root App component
+├── App.css           # App-level styles
+├── main.jsx         # Application entry point
+└── index.css        # Global CSS reset and base styles
 ```
 
 ## Features in Detail

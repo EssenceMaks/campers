@@ -435,12 +435,15 @@
   font-size: 18px;
   text-align: center;
   line-height: 46px;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
+
 }
 
 .showMoreButton:hover {
   background-color: var(--color-accent-dark);
+  color: var(--color-primary);
 }
+
 
 .favoriteButton {
   position: absolute;
