@@ -13,9 +13,9 @@ const initialState = {
     gas: false,
     water: false
   },
-  engines: [], // массив выбранных типов двигателей
-  transmissions: [], // массив выбранных типов трансмиссий
-  forms: [], // массив выбранных типов кузова
+  engines: [], // масив выбранних типів двигунів
+  transmissions: [], // масив выбранних типів трансмісій
+  forms: [], // масив выбранних типів кузова
   isAutoSearch: true
 };
 
@@ -46,7 +46,7 @@ const filtersSlice = createSlice({
   },
 });
 
-// Селекторы
+// Селектори
 export const selectFilters = (state) => state.filters;
 export const selectIsAutoSearch = (state) => state.filters.isAutoSearch;
 
