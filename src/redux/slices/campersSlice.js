@@ -3,7 +3,7 @@ import axios from "axios";
 
 const BASE_URL = "https://66b1f8e71ca8ad33d4f5f63e.mockapi.io";
 
-// Функция для преобразования данных кемпера в формат для каталога
+// Функція для перетворення даних кемпера у формат для каталогу
 const transformCamperForCatalog = (camper) => ({
   id: camper.id,
   name: camper.name,
@@ -16,7 +16,7 @@ const transformCamperForCatalog = (camper) => ({
     : camper.description || '',
   mainImage: camper.gallery?.[0]?.original,
   features: {
-    transmission: camper.transmission, // "automatic" или "manual"
+    transmission: camper.transmission, // "automatic" or "manual"
     engine: camper.engine, // "petrol", "diesel", "hybrid", "gas"
     AC: camper.AC,
     bathroom: camper.bathroom,
@@ -59,12 +59,12 @@ export const searchCampers = createAsyncThunk(
       let filteredItems = transformedItems;
       if (!loadAll && !showFavorites) {
         filteredItems = transformedItems.filter(camper => {
-          // Фильтр по локации
+          // Фільтр по локації
           if (filters.location && !camper.location.toLowerCase().includes(filters.location.toLowerCase())) {
             return false;
           }
 
-          // Фильтр по оборудованию
+          // Фільтр по оснащеню
           const hasAllEquipment = Object.entries(filters.equipment)
             .every(([key, isSelected]) => {
               if (!isSelected) return true;
@@ -73,17 +73,17 @@ export const searchCampers = createAsyncThunk(
 
           if (!hasAllEquipment) return false;
 
-          // Фильтр по типу двигателя
+          // Фільтр по типу двигуна
           if (filters.engines.length > 0 && !filters.engines.includes(camper.features.engine)) {
             return false;
           }
 
-          // Фильтр по трансмиссии
+          // Фільтр по трансмісії
           if (filters.transmissions.length > 0 && !filters.transmissions.includes(camper.features.transmission)) {
             return false;
           }
 
-          // Фильтр по типу транспортного средства
+          // Фільтр по типу кузова
           if (filters.forms.length > 0 && !filters.forms.includes(camper.form)) {
             return false;
           }
@@ -100,7 +100,7 @@ export const searchCampers = createAsyncThunk(
         };
       }
       
-      // Пагинация
+      // Пагінація
       const startIndex = (page - 1) * initialState.pagination.limit;
       const endIndex = startIndex + initialState.pagination.limit;
       const paginatedItems = filteredItems.slice(startIndex, endIndex);
