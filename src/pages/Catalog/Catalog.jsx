@@ -67,7 +67,7 @@ const truncateTitle = (title, maxLength = 23) => {
 };
 
 const CamperCard = ({ camper, onFavoriteClick, isFavorite }) => {
-  // Добавляем console.log для проверки структуры данных
+  // Додаємо console.log для провірки структури даних
   
 
   return (
@@ -263,7 +263,7 @@ const Catalog = () => {
     setLocationInput(value);
     setShowSuggestions(true);
     
-    // Если поле пустое, сбрасываем фильтр и валидацию
+    // Якщо поле порожнє, скидаємо фільтр та валідацію
     if (!value) {
       setIsInvalidCity(false);
       dispatch(setLocationFilter(''));
@@ -276,7 +276,7 @@ const Catalog = () => {
     
     if (value.length >= 2) {
       dispatch(searchLocations(value));
-      // Проверяем валидность после небольшой задержки, чтобы дождаться результатов поиска
+      // Перевіряємо валідність після невеликої затримки, щоб дочекатися результатів пошуку
       setTimeout(() => {
         if (!locationSuggestions || locationSuggestions.length === 0) {
           setIsInvalidCity(true);
@@ -301,7 +301,7 @@ const Catalog = () => {
     }
   };
 
-  // Функция для очистки локации
+  // Функція для очищення локації
   const handleLocationClear = () => {
     setLocationInput('');
     setShowSuggestions(false);
@@ -314,7 +314,7 @@ const Catalog = () => {
     }
   };
 
-  // Проверка валидности города при потере фокуса
+  // Перевірка валідності міста при втраті фокусу
   const handleLocationBlur = () => {
     if (locationInput && (!locationSuggestions || locationSuggestions.length === 0)) {
       setIsInvalidCity(true);
