@@ -5,8 +5,8 @@ A modern React application for booking and managing camper van rentals. Built wi
 ## Features
 
 - 🚐 Browse available camper vans
-- 🔍 Advanced search and filtering
-- ❤️ Save favorites
+- 🔍 Advanced search and filtering (you can choose auto-search or action search button)
+- ❤️ Save favorites, favorites button at the main catalog & have a page with favorites (in header)
 - 📅 Easy booking system
 - 📱 Responsive design
 - 🎨 Modern UI/UX
