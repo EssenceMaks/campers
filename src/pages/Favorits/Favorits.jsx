@@ -11,7 +11,8 @@ import {
   toggleFavorite,
   toggleShowFavorites,
   selectFavorites,
-  selectShowFavorites
+  selectShowFavorites,
+  setShowFavorites
 } from '../../redux/slices/favoritesSlice';
 import styles from './Favorits.module.css';
 
@@ -29,9 +30,9 @@ const Catalog = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(toggleShowFavorites());
+    dispatch(setShowFavorites(true));
     return () => {
-      dispatch(toggleShowFavorites());
+      dispatch(setShowFavorites(false));
     };
   }, [dispatch]);
 

@@ -33,11 +33,14 @@ const favoritesSlice = createSlice({
     },
     toggleShowFavorites: (state) => {
       state.showFavorites = !state.showFavorites;
+    },
+    setShowFavorites: (state, action) => {
+      state.showFavorites = action.payload;
     }
   }
 });
 
-export const { toggleFavorite, toggleShowFavorites } = favoritesSlice.actions;
+export const { toggleFavorite, toggleShowFavorites, setShowFavorites } = favoritesSlice.actions;
 
 export const selectFavorites = (state) => state.favorites.favoriteIds;
 export const selectShowFavorites = (state) => state.favorites.showFavorites;

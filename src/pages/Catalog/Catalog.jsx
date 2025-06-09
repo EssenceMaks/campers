@@ -28,7 +28,7 @@ import {
   selectFilters,
   selectIsAutoSearch
 } from '../../redux/slices/filtersSlice';
-import { toggleFavorite, toggleShowFavorites, selectFavorites, selectShowFavorites } from '../../redux/slices/favoritesSlice';
+import { toggleFavorite, setShowFavorites, selectFavorites, selectShowFavorites } from '../../redux/slices/favoritesSlice';
 import styles from './Catalog.module.css';
 
 const EQUIPMENT_OPTIONS = [
@@ -211,6 +211,8 @@ const CamperCard = ({ camper, onFavoriteClick, isFavorite }) => {
   );
 };
 
+import { useLocation } from 'react-router-dom';
+
 const Catalog = () => {
   const dispatch = useDispatch();
   const campers = useSelector(selectCampers);
@@ -229,6 +231,13 @@ const Catalog = () => {
   const [isInvalidCity, setIsInvalidCity] = useState(false);
 
   const locationInputRef = useRef(null);
+
+  const location = useLocation();
+  // Reset showFavorites when entering Catalog page
+  useEffect(() => {
+    dispatch(setShowFavorites(false));
+    // eslint-disable-next-line
+  }, [location.pathname]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -580,8 +589,8 @@ const Catalog = () => {
               Reset All Filters
             </button>
             <button
-              className={styles.resetButton}
-              onClick={() => dispatch(toggleShowFavorites())}
+              className={`${styles.resetButton} ${showFavorites ? styles.activeFilter : ''}`}
+              onClick={() => dispatch(setShowFavorites(!showFavorites))}
             >
               Show Favorites ({favoriteIds.length || 0}) <Icon name="icon-heart" className={favoriteIds.length > 0 ? styles.activeHeart : styles.emptyHeart} />
             </button>
@@ -595,7 +604,7 @@ const Catalog = () => {
             <h2>Favorites ({favoriteIds.length})</h2>
             <button
               className={styles.outOfFavoritesButton}
-              onClick={() => dispatch(toggleShowFavorites())}
+              onClick={() => dispatch(setShowFavorites(false))}
             >
               Out of favorites
             </button>
